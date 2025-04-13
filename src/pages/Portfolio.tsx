@@ -26,7 +26,6 @@ interface Certificate {
 const Portfolio = () => {
   const { user, profileData, updateSkills, updateProfileLinks, updateProjects, updateCertificates, updateBio } = useAuth();
   const [isPublic, setIsPublic] = useState(true);
-  const [theme, setTheme] = useState('light');
   const [showSkillDialog, setShowSkillDialog] = useState(false);
   const [showLinksDialog, setShowLinksDialog] = useState(false);
   const [showProjectDialog, setShowProjectDialog] = useState(false);
@@ -168,14 +167,6 @@ const Portfolio = () => {
           >
             <Share2 className="h-4 w-4" />
             {isPublic ? 'Public' : 'Private'}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-            className="flex items-center gap-2 text-sm"
-          >
-            <Palette className="h-4 w-4" />
-            Theme
           </Button>
           <Button
             variant="outline"
