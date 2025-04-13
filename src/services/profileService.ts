@@ -44,78 +44,28 @@ export const fetchGitHubProfile = async (username: string): Promise<GitHubProfil
 // Fetch LeetCode Profile
 export const fetchLeetCodeProfile = async (username: string): Promise<LeetCodeProfile | null> => {
   try {
-    const query = `
-      query getUserProfile($username: String!) {
-        matchedUser(username: $username) {
-          username
-          profile {
-            ranking
-            acceptanceRate
-          }
-          submitStats {
-            acSubmissionNum {
-              difficulty
-              count
-            }
-            totalSubmissionNum {
-              difficulty
-              count
-            }
-          }
-          problemsSolvedBeatsStats {
-            difficulty
-            percentage
-          }
-        }
-        allQuestionsCount {
-          difficulty
-          count
-        }
-      }
-    `;
-
-    const variables = { username };
-
-    const response = await axios.post('https://leetcode.com/graphql', {
-      query,
-      variables,
-      headers: {
-        'Content-Type': 'application/json',
-        'Referer': 'https://leetcode.com',
-      }
-    });
-
-    const data = response.data.data;
-    if (!data || !data.matchedUser) {
+    // Using LeetCode's public API endpoint
+    const response = await axios.get(`https://leetcode-stats-api.herokuapp.com/${username}`);
+    
+    if (response.status !== 200) {
       throw new Error('User not found');
     }
 
-    const { matchedUser, allQuestionsCount } = data;
-    const { profile, submitStats } = matchedUser;
-
-    const totalQuestions = allQuestionsCount.reduce(
-      (total: number, curr: any) => total + curr.count,
-      0
-    );
-
-    const solvedStats = submitStats.acSubmissionNum.reduce(
-      (acc: any, stat: any) => {
-        acc[stat.difficulty.toLowerCase()] = stat.count;
-        acc.total += stat.count;
-        return acc;
-      },
-      { total: 0, easy: 0, medium: 0, hard: 0 }
-    );
+    const data = response.data;
+    
+    if (!data) {
+      throw new Error('Failed to fetch LeetCode profile');
+    }
 
     return {
-      username: matchedUser.username,
-      totalSolved: solvedStats.total,
-      totalQuestions,
-      easySolved: solvedStats.easy,
-      mediumSolved: solvedStats.medium,
-      hardSolved: solvedStats.hard,
-      acceptanceRate: profile.acceptanceRate || 0,
-      ranking: profile.ranking || 0,
+      username: username,
+      totalSolved: data.totalSolved || 0,
+      totalQuestions: data.totalQuestions || 0,
+      easySolved: data.easySolved || 0,
+      mediumSolved: data.mediumSolved || 0,
+      hardSolved: data.hardSolved || 0,
+      acceptanceRate: data.acceptanceRate || 0,
+      ranking: data.ranking || 0
     };
   } catch (error) {
     console.error('Error fetching LeetCode profile:', error);
