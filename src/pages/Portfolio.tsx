@@ -135,7 +135,7 @@ const Portfolio = () => {
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8">
         <h1 className="text-2xl sm:text-3xl font-bold">My Portfolio</h1>
-        <div className="flex gap-3">
+        <div className="flex gap-3" >
           <Button
             variant={isPublic ? 'default' : 'outline'}
             onClick={() => setIsPublic(!isPublic)}
@@ -156,7 +156,7 @@ const Portfolio = () => {
       </div>
 
       {/* Profile Section */}
-      <Card className="glass-card p-4 sm:p-6 mb-6 sm:mb-8">
+      <Card className="glass-card p-4 sm:p-6 mb-6 sm:mb-8 glass-card hover:border-sypher-accent/50 transition-colors">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
           <div className="w-24 sm:w-32 h-24 sm:h-32 rounded-full bg-sypher-accent flex items-center justify-center flex-shrink-0">
             {user?.photoURL ? (
@@ -204,7 +204,7 @@ const Portfolio = () => {
 
       {/* Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
-        <Card className="glass-card p-4 sm:p-6">
+        <Card className="glass-card p-4 sm:p-6 glass-card hover:border-sypher-accent/50 transition-colors">
           <h3 className="text-lg sm:text-xl font-semibold mb-4">LeetCode Statistics</h3>
           <div className="grid grid-cols-3 gap-3 sm:gap-4 text-center">
             <div className="p-2 rounded-lg bg-green-500/10">
@@ -222,7 +222,7 @@ const Portfolio = () => {
           </div>
         </Card>
 
-        <Card className="glass-card p-4 sm:p-6">
+        <Card className="glass-card p-4 sm:p-6 glass-card hover:border-sypher-accent/50 transition-colors">
           <h3 className="text-lg sm:text-xl font-semibold mb-4">GitHub Activity</h3>
           <div className="grid grid-cols-3 gap-3 sm:gap-4 text-center">
             <div className="p-2 rounded-lg bg-sypher-accent/10">
@@ -257,10 +257,10 @@ const Portfolio = () => {
         </div>
         <div className=" grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           {skills.map((skill) => (
-            <div key={skill.name} className="glass-card p-3 sm:p-4 border rounded-lg bg-card/50 relative group hover:shadow-lg hover:shadow-sypher-accent/20 transition-all duration-300 animate-glow">
+            <div key={skill.name} className="glass-card glass-card hover:border-sypher-accent/50  p-3 sm:p-4 border rounded-lg bg-card/50 relative group hover:shadow-lg transition-all duration-300 animate-glow">
               <button
                 onClick={() => handleRemoveSkill(skill.name)}
-                className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-70 hover:opacity-100 hover:bg-destructive/20 transition-all"
+                className="absolute top-2 right-2 p-1 rounded-full opacity-0  "
               >
                 <X className="h-4 w-4 text-destructive" />
               </button>
@@ -295,7 +295,7 @@ const Portfolio = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {projects.map((project) => (
-            <div key={project.name} className="glass-card border p-3 sm:p-4 relative group">
+            <div key={project.name} className="glass-card hover:border-sypher-accent/50 transition-colors border p-3 sm:p-4 relative group">
               <button
                 onClick={() => handleRemoveProject(project.name)}
                 className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-70 hover:opacity-100 hover:bg-destructive/20 transition-all"
@@ -343,7 +343,7 @@ const Portfolio = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {certificates.map((certificate) => (
-            <div key={certificate.name} className="glass-card border p-3 sm:p-4 relative group">
+            <div key={certificate.name} className="glass-card hover:border-sypher-accent/50 transition-colors border p-3 sm:p-4 relative group">
               <button
                 onClick={() => handleRemoveCertificate(certificate.name)}
                 className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-70 hover:opacity-100 hover:bg-destructive/20 transition-all"

@@ -66,15 +66,19 @@ const Dashboard = () => {
               title="Easy Problems" 
               value={leetcodeStats.easySolved.toString()}
               icon={<Code size={20} />}
+              className="glass-card hover:border-sypher-accent/50 transition-colors"
+
             />
             <StatCard 
               title="Medium Problems" 
               value={leetcodeStats.mediumSolved.toString()}
+              className="glass-card hover:border-sypher-accent/50 transition-colors"
               icon={<Code size={20} />}
             />
             <StatCard 
               title="Hard Problems" 
               value={leetcodeStats.hardSolved.toString()}
+              className="glass-card hover:border-sypher-accent/50 transition-colors"
               icon={<Code size={20} />}
             />
           </div>
@@ -85,17 +89,23 @@ const Dashboard = () => {
               title="Acceptance Rate" 
               value={`${leetcodeStats.acceptanceRate.toFixed(1)}%`}
               icon={<Target size={20} />}
+              className="glass-card hover:border-sypher-accent/50 transition-colors"
+
               trend={{ value: Math.round(leetcodeStats.acceptanceRate), positive: leetcodeStats.acceptanceRate > 50 }}
             />
             <StatCard 
               title="LeetCode Ranking" 
               value={leetcodeStats.ranking.toLocaleString()}
               icon={<BarChart3 size={20} />}
+              className="glass-card hover:border-sypher-accent/50 transition-colors"
+
             />
             <StatCard 
               title="Total Problems Solved" 
               value={(leetcodeStats.easySolved + leetcodeStats.mediumSolved + leetcodeStats.hardSolved).toString()}
               icon={<Target size={20} />}
+              className="glass-card hover:border-sypher-accent/50 transition-colors"
+
             />
           </div>
         </div>
@@ -104,36 +114,40 @@ const Dashboard = () => {
       {/* GitHub Stats */}
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-4">GitHub Progress</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 ">
           <StatCard 
             title="Total Contributions" 
             value={githubContributions}
             icon={<Github size={20} />}
             trend={githubTrend}
+            className="glass-card hover:border-sypher-accent/50 transition-colors"
           />
           <StatCard 
             title="Repositories" 
             value={profileData?.github?.public_repos || 0}
             icon={<Github size={20} />}
+            className="glass-card hover:border-sypher-accent/50 transition-colors"
           />
           <StatCard 
             title="Followers" 
             value={profileData?.github?.followers || 0}
             icon={<Github size={20} />}
+            className="glass-card hover:border-sypher-accent/50 transition-colors"
           />
           <StatCard 
             title="Following" 
             value={profileData?.github?.following || 0}
             icon={<Github size={20} />}
+            className="glass-card hover:border-sypher-accent/50 transition-colors"
           />
         </div>
       </div>
       
       {/* Recent Activity */}
-      <div className="mb-8">
+      <div className="mb-8 ">
         <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-        <div className="glass-card p-6">
-          <div className="space-y-4">
+        <div className="glass-card p-6  hover:border-sypher-accent/50 transition-colors">
+          <div className="space-y-4 ">
             {activities.map((activity, index) => (
               <div key={index} className="flex items-center gap-4">
                 <div className={`p-2 rounded-full ${activity.iconBg}`}>

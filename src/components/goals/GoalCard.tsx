@@ -11,7 +11,7 @@ interface GoalCardProps {
 
 const GoalCard = ({ goal, onComplete, onDelete }: GoalCardProps) => {
   return (
-    <Card className="glass-card border-none w-full transition-all duration-300 hover:shadow-lg p-2 sm:p-4 flex flex-col min-h-[160px] relative">
+    <Card className="glass-card hover:border-sypher-accent/50  border-none w-full transition-all duration-300 hover:shadow-lg p-2 sm:p-4 flex flex-col min-h-[160px] relative">
       <CardHeader className="flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-4 p-2 sm:p-4">
         <div className="flex items-start gap-3 w-full">
           <Button

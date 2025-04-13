@@ -100,6 +100,7 @@ const Goals = () => {
                   goal={goal}
                   onComplete={handleCompleteGoal}
                   onDelete={handleDeleteGoal}
+                  
                 />
               ))}
             </div>
