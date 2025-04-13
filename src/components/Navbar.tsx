@@ -1,0 +1,91 @@
+
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Download, Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import GoogleSignIn from "@/components/auth/GoogleSignIn";
+import { useAuth } from "@/context/AuthContext";
+
+const navLinks = [
+  { name: "About", path: "/about" },
+  { name: "Projects", path: "/projects" },
+  { name: "Contributions", path: "/contributions" },
+  { name: "Notes", path: "/notes" },
+  { name: "Dashboard", path: "/dashboard" },
+];
+
+const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth();
+
+  return (
+    <nav className="fixed w-full px-4 py-3 z-50">
+      <div className="max-w-7xl mx-auto glass-card px-4 py-3 flex justify-between items-center">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="h-10 w-10 rounded-full bg-sypher-accent flex items-center justify-center text-white font-bold">
+            S
+          </div>
+          <span className="font-bold text-xl">SYPHER</span>
+        </Link>
+
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-8">
+          {navLinks.map((link) => (
+            <Link 
+              key={link.name} 
+              to={link.path}
+              className="text-gray-300 hover:text-sypher-accent transition-colors"
+            >
+              {link.name}
+            </Link>
+          ))}
+        </div>
+
+        <div className="hidden md:flex items-center gap-4">
+          <GoogleSignIn />
+          {user && (
+            <Button variant="outline" className="flex gap-2 items-center">
+              <Download size={16} />
+              Export CV
+            </Button>
+          )}
+        </div>
+
+        {/* Mobile Navigation Toggle */}
+        <button 
+          onClick={() => setIsOpen(!isOpen)} 
+          className="md:hidden text-gray-300"
+        >
+          {isOpen ? <X /> : <Menu />}
+        </button>
+      </div>
+
+      {/* Mobile Navigation Menu */}
+      {isOpen && (
+        <div className="md:hidden absolute top-full left-0 right-0 glass-card mt-2 py-4 px-4 flex flex-col gap-4">
+          {navLinks.map((link) => (
+            <Link 
+              key={link.name} 
+              to={link.path}
+              onClick={() => setIsOpen(false)}
+              className="text-gray-300 hover:text-sypher-accent transition-colors"
+            >
+              {link.name}
+            </Link>
+          ))}
+          <div className="py-2">
+            <GoogleSignIn />
+          </div>
+          {user && (
+            <Button variant="outline" className="flex gap-2 items-center w-full justify-center">
+              <Download size={16} />
+              Export CV
+            </Button>
+          )}
+        </div>
+      )}
+    </nav>
+  );
+};
+
+export default Navbar;
