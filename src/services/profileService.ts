@@ -30,6 +30,7 @@ interface LeetCodeProfile {
 }
 
 export interface ProfileData {
+  projects: any[];
   skills: any[];
   github?: GitHubProfile;
   leetcode?: LeetCodeProfile;

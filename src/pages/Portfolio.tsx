@@ -8,13 +8,28 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
+interface Project {
+  name: string;
+  description: string;
+  techStack: string[];
+  githubUrl: string;
+}
+
 const Portfolio = () => {
-  const { user, profileData, updateSkills, updateProfileLinks } = useAuth();
+  const { user, profileData, updateSkills, updateProfileLinks, updateProjects } = useAuth();
   const [isPublic, setIsPublic] = useState(true);
   const [theme, setTheme] = useState('light');
   const [showSkillDialog, setShowSkillDialog] = useState(false);
   const [showLinksDialog, setShowLinksDialog] = useState(false);
+  const [showProjectDialog, setShowProjectDialog] = useState(false);
   const [newSkill, setNewSkill] = useState({ name: '', level: '' });
+  const [newProject, setNewProject] = useState<Project>({
+    name: '',
+    description: '',
+    techStack: [],
+    githubUrl: ''
+  });
+  const [newTechStack, setNewTechStack] = useState('');
   const [links, setLinks] = useState({
     github: profileData?.github?.login || '',
     leetcode: profileData?.leetcode?.username || ''
@@ -61,20 +76,45 @@ const Portfolio = () => {
 
   const skills = profileData?.skills || [];
 
-  const projects = [
-    {
-      name: 'Project Management App',
-      description: 'A full-stack application for managing projects and tasks',
-      techStack: ['React', 'Node.js', 'MongoDB'],
-      githubUrl: 'https://github.com/username/project-management'
-    },
-    {
-      name: 'E-commerce Platform',
-      description: 'An online shopping platform with cart and payment integration',
-      techStack: ['Next.js', 'Stripe', 'PostgreSQL'],
-      githubUrl: 'https://github.com/username/ecommerce-platform'
+  const projects = profileData?.projects || [];
+
+  const handleAddProject = async () => {
+    if (newProject.name && newProject.description && newProject.techStack.length > 0 && newProject.githubUrl) {
+      const currentProjects = profileData?.projects || [];
+      const updatedProjects = [...currentProjects, newProject];
+      await updateProjects(updatedProjects);
+      setNewProject({
+        name: '',
+        description: '',
+        techStack: [],
+        githubUrl: ''
+      });
+      setShowProjectDialog(false);
     }
-  ];
+  };
+
+  const handleAddTechStack = () => {
+    if (newTechStack && !newProject.techStack.includes(newTechStack)) {
+      setNewProject(prev => ({
+        ...prev,
+        techStack: [...prev.techStack, newTechStack]
+      }));
+      setNewTechStack('');
+    }
+  };
+
+  const handleRemoveTechStack = (tech: string) => {
+    setNewProject(prev => ({
+      ...prev,
+      techStack: prev.techStack.filter(t => t !== tech)
+    }));
+  };
+
+  const handleRemoveProject = async (projectName: string) => {
+    const currentProjects = profileData?.projects || [];
+    const updatedProjects = currentProjects.filter(project => project.name !== projectName);
+    await updateProjects(updatedProjects);
+  };
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-14 py-6 sm:py-10">
@@ -208,17 +248,19 @@ const Portfolio = () => {
             Add Skill
           </Button>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+        <div className=" grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           {skills.map((skill) => (
-            <div key={skill.name} className="p-3 sm:p-4 border rounded-lg bg-card/50 relative group">
+            <div key={skill.name} className="glass-card p-3 sm:p-4 border rounded-lg bg-card/50 relative group hover:shadow-lg hover:shadow-sypher-accent/20 transition-all duration-300 animate-glow">
               <button
                 onClick={() => handleRemoveSkill(skill.name)}
-                className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-destructive/10 transition-opacity"
+                className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-70 hover:opacity-100 hover:bg-destructive/20 transition-all"
               >
                 <X className="h-4 w-4 text-destructive" />
               </button>
-              <div className="font-semibold text-sm sm:text-base">{skill.name}</div>
-              <div className="text-xs sm:text-sm text-muted-foreground">{skill.level}</div>
+              <div>
+                <div className="font-semibold text-sm sm:text-base">{skill.name}</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">{skill.level}</div>
+              </div>
             </div>
           ))}
         </div>
@@ -278,10 +320,27 @@ const Portfolio = () => {
 
       {/* Projects Section */}
       <Card className="glass-card p-4 sm:p-6">
-        <h3 className="text-lg sm:text-xl font-semibold mb-4">Featured Projects</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg sm:text-xl font-semibold">Featured Projects</h3>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowProjectDialog(true)}
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Add Project
+          </Button>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {projects.map((project) => (
-            <div key={project.name} className="glass-card p-3 sm:p-4">
+            <div key={project.name} className="glass-card border p-3 sm:p-4 relative group">
+              <button
+                onClick={() => handleRemoveProject(project.name)}
+                className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-70 hover:opacity-100 hover:bg-destructive/20 transition-all"
+              >
+                <X className="h-4 w-4 text-destructive" />
+              </button>
               <h4 className="text-base sm:text-lg font-semibold mb-2">{project.name}</h4>
               <p className="text-sm text-muted-foreground mb-3">{project.description}</p>
               <div className="flex flex-wrap gap-2 mb-4">
@@ -306,6 +365,80 @@ const Portfolio = () => {
           ))}
         </div>
       </Card>
+
+      {/* Add Project Dialog */}
+      <Dialog open={showProjectDialog} onOpenChange={setShowProjectDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add New Project</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Input
+                placeholder="Project name"
+                value={newProject.name}
+                onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Input
+                placeholder="Project description"
+                value={newProject.description}
+                onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Input
+                placeholder="GitHub URL"
+                value={newProject.githubUrl}
+                onChange={(e) => setNewProject({ ...newProject, githubUrl: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Add technology (e.g., React, Node.js)"
+                  value={newTechStack}
+                  onChange={(e) => setNewTechStack(e.target.value)}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleAddTechStack}
+                  disabled={!newTechStack}
+                >
+                  Add
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {newProject.techStack.map((tech) => (
+                  <span
+                    key={tech}
+                    className="px-2 py-1 bg-sypher-accent/10 text-sypher-accent rounded-full text-xs flex items-center gap-1"
+                  >
+                    {tech}
+                    <button
+                      onClick={() => handleRemoveTechStack(tech)}
+                      className="hover:text-destructive"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowProjectDialog(false)}>Cancel</Button>
+            <Button
+              onClick={handleAddProject}
+              disabled={!newProject.name || !newProject.description || newProject.techStack.length === 0 || !newProject.githubUrl}
+            >
+              Add Project
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

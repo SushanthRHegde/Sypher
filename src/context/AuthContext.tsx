@@ -16,6 +16,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   updateProfileLinks: (links: ProfileLinks) => void;
   updateSkills: (skills: { name: string; level: string }[]) => Promise<void>;
+  updateProjects: (projects: { name: string; description: string; techStack: string[]; githubUrl: string }[]) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -27,6 +28,7 @@ const AuthContext = createContext<AuthContextType>({
   logout: async () => {},
   updateProfileLinks: () => {},
   updateSkills: async () => {},
+  updateProjects: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -38,6 +40,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profileLinks, setProfileLinks] = useState<ProfileLinks | null>(null);
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const { toast } = useToast();
+
+  const updateProjects = async (projects: { name: string; description: string; techStack: string[]; githubUrl: string }[]) => {
+    if (user && profileLinks) {
+      try {
+        const updatedProfileData = { ...profileData, projects };
+        await saveProfileData(user.uid, updatedProfileData, profileLinks);
+        setProfileData(updatedProfileData);
+        toast({
+          title: "Projects updated",
+          description: "Your projects have been successfully updated",
+        });
+      } catch (error) {
+        toast({
+          title: "Error updating projects",
+          description: "Could not update projects",
+          variant: "destructive",
+        });
+      }
+    }
+  };
 
   // Load profile data from Firestore
   useEffect(() => {
@@ -140,7 +162,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, profileLinks, profileData, googleSignIn, logout, updateProfileLinks, updateSkills }}>
+    <AuthContext.Provider value={{ user, loading, profileLinks, profileData, googleSignIn, logout, updateProfileLinks, updateSkills, updateProjects }}>
 
       {children}
       {showProfileDialog && (
