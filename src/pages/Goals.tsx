@@ -42,7 +42,16 @@ const Goals = () => {
     try {
       const goal = goals.find(g => g.id === goalId);
       if (goal) {
-        await goalService.updateGoal(goalId, { completed: !goal.completed });
+        const now = new Date();
+        const updatedHistory = goal.completionHistory || [];
+        if (!goal.completed) {
+          updatedHistory.push(now);
+        }
+        await goalService.updateGoal(goalId, { 
+          completed: !goal.completed,
+          completionHistory: updatedHistory,
+          updatedAt: now
+        });
         loadGoals();
       }
     } catch (error) {
@@ -73,9 +82,9 @@ const Goals = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6">
         {/* Active Goals Section */}
-        <div className="glass-card p-4 sm:p-6 rounded-lg lg:col-span-3 order-2 lg:order-1">
+        <div className="glass-card p-4 sm:p-6 rounded-lg">
           <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center">
             <Target className="mr-2" /> Active Goals
           </h2>
@@ -96,25 +105,7 @@ const Goals = () => {
         </div>
 
         {/* Progress Tracking Section */}
-        <div className="glass-card p-4 sm:p-6 rounded-lg order-1 lg:order-2">
-          <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center">
-            <Trophy className="mr-2" /> Progress & Streaks
-          </h2>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span>Current Streak</span>
-              <span className="text-sypher-accent font-bold">
-                {Math.max(...goals.map(goal => goal.streak), 0)} days
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Completed Goals</span>
-              <span className="text-sypher-accent font-bold">
-                {goals.filter(goal => goal.completed).length}
-              </span>
-            </div>
-          </div>
-        </div>
+   
       </div>
 
       {/* Notifications Section */}

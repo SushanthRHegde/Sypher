@@ -11,13 +11,13 @@ interface GoalCardProps {
 
 const GoalCard = ({ goal, onComplete, onDelete }: GoalCardProps) => {
   return (
-    <Card className={`glass-card border-none ${goal.completed ? 'opacity-75' : ''} w-full max-w-sm mx-auto transition-all duration-300 hover:shadow-lg`}>
-      <CardHeader className="flex flex-col sm:flex-row items-start justify-between space-y-2 sm:space-y-0 p-4">
-        <div className="flex items-start sm:items-center gap-3 w-full sm:w-auto">
+    <Card className="glass-card border-none w-full transition-all duration-300 hover:shadow-lg p-2 sm:p-4 flex flex-col min-h-[160px] relative">
+      <CardHeader className="flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-4 p-2 sm:p-4">
+        <div className="flex items-start gap-3 w-full">
           <Button
             variant="ghost"
             size="icon"
-            className={`${goal.completed ? 'text-green-500' : 'text-gray-400'} flex-shrink-0`}
+            className={`${goal.completed ? 'text-green-500' : 'text-gray-400'} flex-shrink-0 hover:bg-opacity-10`}
             onClick={() => onComplete(goal.id)}
           >
             {goal.completed ? (
@@ -26,15 +26,15 @@ const GoalCard = ({ goal, onComplete, onDelete }: GoalCardProps) => {
               <Circle className="h-5 w-5" />
             )}
           </Button>
-          <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-base sm:text-lg truncate">{goal.title}</h3>
+          <div className="min-w-0 flex-1 space-y-1">
+            <h3 className="font-semibold text-base sm:text-lg truncate pr-8">{goal.title}</h3>
             <p className="text-sm text-gray-400 capitalize">{goal.type} goal</p>
           </div>
         </div>
         <Button
           variant="ghost"
           size="icon"
-          className="text-gray-400 hover:text-red-500 flex-shrink-0"
+          className="text-gray-400 hover:text-red-500 hover:bg-opacity-10 absolute top-4 right-4"
           onClick={() => onDelete(goal.id)}
         >
           <span className="sr-only">Delete goal</span>
@@ -54,16 +54,10 @@ const GoalCard = ({ goal, onComplete, onDelete }: GoalCardProps) => {
           </svg>
         </Button>
       </CardHeader>
-      <CardContent className="p-4 pt-0">
+      <CardContent className="p-2 sm:p-4 flex-grow">
         <p className="text-sm text-gray-300 line-clamp-2">{goal.description}</p>
-        <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm">
-          <div className="flex items-center gap-1">
-            <Trophy className="h-4 w-4 text-gray-400 flex-shrink-0" />
-            <span className="text-gray-400">{goal.streak} day streak</span>
-          </div>
-        </div>
       </CardContent>
-      <CardFooter className="p-4 pt-2">
+      <CardFooter className="p-2 sm:p-4">
         <div className="h-2 w-full bg-gray-700 rounded-full overflow-hidden">
           <div
             className={`h-full transition-all duration-300 ${goal.completed ? 'bg-green-500' : 'bg-sypher-accent'}`}
