@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { User, Github, Code2, Award, Share2, Palette, Plus, X, Link as LinkIcon } from 'lucide-react';
+import { User, Github, Code2, Award, Share2, Palette, Plus, X, Link as LinkIcon, Edit } from 'lucide-react';
 import ProfileLinksDialog from '@/components/auth/ProfileLinksDialog';
 import SkillDialog from '@/components/portfolio/SkillDialog';
 import ProjectDialog from '@/components/portfolio/ProjectDialog';
 import CertificateDialog from '@/components/portfolio/CertificateDialog';
+import BioDialog from '@/components/portfolio/BioDialog';
 
 interface Project {
   name: string;
@@ -23,13 +24,14 @@ interface Certificate {
 }
 
 const Portfolio = () => {
-  const { user, profileData, updateSkills, updateProfileLinks, updateProjects, updateCertificates } = useAuth();
+  const { user, profileData, updateSkills, updateProfileLinks, updateProjects, updateCertificates, updateBio } = useAuth();
   const [isPublic, setIsPublic] = useState(true);
   const [theme, setTheme] = useState('light');
   const [showSkillDialog, setShowSkillDialog] = useState(false);
   const [showLinksDialog, setShowLinksDialog] = useState(false);
   const [showProjectDialog, setShowProjectDialog] = useState(false);
   const [showCertificateDialog, setShowCertificateDialog] = useState(false);
+  const [showBioDialog, setShowBioDialog] = useState(false);
   const [newSkill, setNewSkill] = useState({ name: '', level: '' });
   const [newProject, setNewProject] = useState<Project>({
     name: '',
@@ -177,6 +179,14 @@ const Portfolio = () => {
           </Button>
           <Button
             variant="outline"
+            onClick={() => setShowBioDialog(true)}
+            className="flex items-center gap-2 text-sm"
+          >
+            <Edit className="h-4 w-4" />
+            Edit Bio
+          </Button>
+          <Button
+            variant="outline"
             onClick={() => setShowLinksDialog(true)}
             className="flex items-center gap-2 text-sm"
           >
@@ -202,10 +212,11 @@ const Portfolio = () => {
           </div>
           <div className="flex-1 text-center sm:text-left">
             <h2 className="text-xl sm:text-2xl font-bold mb-2">{user?.displayName || 'Your Name'}</h2>
-            <p className="text-muted-foreground mb-4 text-sm sm:text-base">
-              Full-stack developer passionate about creating efficient and scalable applications.
-              Experienced in modern web technologies and best practices.
-            </p>
+            <div className="relative max-w-[600px] mx-auto sm:mx-0">
+              <p className="text-muted-foreground mb-4 text-sm sm:text-base">
+                {profileData?.bio || ''}
+              </p>
+            </div>
             <div className="flex gap-1 justify-center sm:justify-start ">
               {profileData?.github?.login && (
                 <Button
@@ -420,6 +431,16 @@ const Portfolio = () => {
         isOpen={showProjectDialog}
         onClose={() => setShowProjectDialog(false)}
         onSave={handleAddProject}
+      />
+
+      <BioDialog
+        isOpen={showBioDialog}
+        onClose={() => setShowBioDialog(false)}
+        onSave={async (bio) => {
+          await updateBio({ text: bio });
+          setShowBioDialog(false);
+        }}
+        initialBio={profileData?.bio}
       />
     </div>
   );

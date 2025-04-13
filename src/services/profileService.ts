@@ -30,6 +30,7 @@ interface LeetCodeProfile {
 }
 
 export interface ProfileData {
+  bio: string;
   certificates: any[];
   projects: any[];
   skills: any[];
