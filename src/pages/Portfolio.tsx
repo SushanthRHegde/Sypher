@@ -15,13 +15,21 @@ interface Project {
   githubUrl: string;
 }
 
+interface Certificate {
+  name: string;
+  organization: string;
+  issueDate: string;
+  verificationUrl: string;
+}
+
 const Portfolio = () => {
-  const { user, profileData, updateSkills, updateProfileLinks, updateProjects } = useAuth();
+  const { user, profileData, updateSkills, updateProfileLinks, updateProjects, updateCertificates } = useAuth();
   const [isPublic, setIsPublic] = useState(true);
   const [theme, setTheme] = useState('light');
   const [showSkillDialog, setShowSkillDialog] = useState(false);
   const [showLinksDialog, setShowLinksDialog] = useState(false);
   const [showProjectDialog, setShowProjectDialog] = useState(false);
+  const [showCertificateDialog, setShowCertificateDialog] = useState(false);
   const [newSkill, setNewSkill] = useState({ name: '', level: '' });
   const [newProject, setNewProject] = useState<Project>({
     name: '',
@@ -30,6 +38,13 @@ const Portfolio = () => {
     githubUrl: ''
   });
   const [newTechStack, setNewTechStack] = useState('');
+  const [newCertificate, setNewCertificate] = useState<Certificate>({
+    name: '',
+    organization: '',
+    issueDate: '',
+    verificationUrl: ''
+  });
+
   const [links, setLinks] = useState({
     github: profileData?.github?.login || '',
     leetcode: profileData?.leetcode?.username || ''
@@ -77,6 +92,28 @@ const Portfolio = () => {
   const skills = profileData?.skills || [];
 
   const projects = profileData?.projects || [];
+  const certificates = profileData?.certificates || [];
+
+  const handleAddCertificate = async () => {
+    if (newCertificate.name && newCertificate.organization && newCertificate.issueDate && newCertificate.verificationUrl) {
+      const currentCertificates = profileData?.certificates || [];
+      const updatedCertificates = [...currentCertificates, newCertificate];
+      await updateCertificates(updatedCertificates);
+      setNewCertificate({
+        name: '',
+        organization: '',
+        issueDate: '',
+        verificationUrl: ''
+      });
+      setShowCertificateDialog(false);
+    }
+  };
+
+  const handleRemoveCertificate = async (certificateName: string) => {
+    const currentCertificates = profileData?.certificates || [];
+    const updatedCertificates = currentCertificates.filter(cert => cert.name !== certificateName);
+    await updateCertificates(updatedCertificates);
+  };
 
   const handleAddProject = async () => {
     if (newProject.name && newProject.description && newProject.techStack.length > 0 && newProject.githubUrl) {
@@ -169,11 +206,11 @@ const Portfolio = () => {
               Full-stack developer passionate about creating efficient and scalable applications.
               Experienced in modern web technologies and best practices.
             </p>
-            <div className="flex gap-3 justify-center sm:justify-start">
+            <div className="flex gap-1 justify-center sm:justify-start ">
               {profileData?.github?.login && (
                 <Button
                   variant="outline"
-                  className="flex items-center gap-2 text-sm"
+                  className="flex items-center gap-2 text-sm "
                   onClick={() => window.open(`https://github.com/${profileData.github.login}`, '_blank')}
                 >
                   <Github className="h-4 w-4" />
@@ -365,6 +402,93 @@ const Portfolio = () => {
           ))}
         </div>
       </Card>
+
+      {/* Certifications Section */}
+      <Card className="glass-card p-4 sm:p-6 mb-6 sm:mb-8 mt-8">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg sm:text-xl font-semibold">Certifications</h3>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowCertificateDialog(true)}
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Add Certificate
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          {certificates.map((certificate) => (
+            <div key={certificate.name} className="glass-card border p-3 sm:p-4 relative group">
+              <button
+                onClick={() => handleRemoveCertificate(certificate.name)}
+                className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-70 hover:opacity-100 hover:bg-destructive/20 transition-all"
+              >
+                <X className="h-4 w-4 text-destructive" />
+              </button>
+              <h4 className="text-base sm:text-lg font-semibold mb-2">{certificate.name}</h4>
+              <p className="text-sm text-muted-foreground mb-2">{certificate.organization}</p>
+              <p className="text-xs text-muted-foreground mb-3">{certificate.issueDate}</p>
+              <Button
+                variant="outline"
+                className="flex items-center gap-2 text-sm w-full sm:w-auto"
+                onClick={() => window.open(certificate.verificationUrl, '_blank')}
+              >
+                <Award className="h-4 w-4" />
+                Verify Certificate
+              </Button>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Add Certificate Dialog */}
+      <Dialog open={showCertificateDialog} onOpenChange={setShowCertificateDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add New Certificate</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Input
+                placeholder="Certificate name"
+                value={newCertificate.name}
+                onChange={(e) => setNewCertificate({ ...newCertificate, name: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Input
+                placeholder="Organization/Company"
+                value={newCertificate.organization}
+                onChange={(e) => setNewCertificate({ ...newCertificate, organization: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Input
+                type="date"
+                value={newCertificate.issueDate}
+                onChange={(e) => setNewCertificate({ ...newCertificate, issueDate: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Input
+                placeholder="Verification URL"
+                value={newCertificate.verificationUrl}
+                onChange={(e) => setNewCertificate({ ...newCertificate, verificationUrl: e.target.value })}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCertificateDialog(false)}>Cancel</Button>
+            <Button
+              onClick={handleAddCertificate}
+              disabled={!newCertificate.name || !newCertificate.organization || !newCertificate.issueDate || !newCertificate.verificationUrl}
+            >
+              Add Certificate
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Add Project Dialog */}
       <Dialog open={showProjectDialog} onOpenChange={setShowProjectDialog}>

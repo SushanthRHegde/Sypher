@@ -17,6 +17,7 @@ interface AuthContextType {
   updateProfileLinks: (links: ProfileLinks) => void;
   updateSkills: (skills: { name: string; level: string }[]) => Promise<void>;
   updateProjects: (projects: { name: string; description: string; techStack: string[]; githubUrl: string }[]) => Promise<void>;
+  updateCertificates: (certificates: { name: string; organization: string; issueDate: string; verificationUrl: string }[]) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -29,6 +30,7 @@ const AuthContext = createContext<AuthContextType>({
   updateProfileLinks: () => {},
   updateSkills: async () => {},
   updateProjects: async () => {},
+  updateCertificates: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -161,8 +163,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const updateCertificates = async (certificates: { name: string; organization: string; issueDate: string; verificationUrl: string }[]) => {
+    if (user && profileLinks) {
+      try {
+        const updatedProfileData = { ...profileData, certificates };
+        await saveProfileData(user.uid, updatedProfileData, profileLinks);
+        setProfileData(updatedProfileData);
+        toast({
+          title: "Certificates updated",
+          description: "Your certificates have been successfully updated",
+        });
+      } catch (error) {
+        toast({
+          title: "Error updating certificates",
+          description: "Could not update certificates",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, profileLinks, profileData, googleSignIn, logout, updateProfileLinks, updateSkills, updateProjects }}>
+    <AuthContext.Provider value={{ user, loading, profileLinks, profileData, googleSignIn, logout, updateProfileLinks, updateSkills, updateProjects, updateCertificates }}>
 
       {children}
       {showProfileDialog && (
