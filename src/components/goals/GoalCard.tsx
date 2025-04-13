@@ -1,4 +1,4 @@
-import { CheckCircle2, Circle, Target, Calendar, Trophy } from 'lucide-react';
+import { CheckCircle2, Circle, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Goal } from '@/services/goalService';
@@ -10,16 +10,6 @@ interface GoalCardProps {
 }
 
 const GoalCard = ({ goal, onComplete, onDelete }: GoalCardProps) => {
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    }).format(date);
-  };
-
-  const isOverdue = new Date() > goal.deadline && !goal.completed;
-
   return (
     <Card className={`glass-card border-none ${goal.completed ? 'opacity-75' : ''} w-full max-w-sm mx-auto transition-all duration-300 hover:shadow-lg`}>
       <CardHeader className="flex flex-col sm:flex-row items-start justify-between space-y-2 sm:space-y-0 p-4">
@@ -67,12 +57,6 @@ const GoalCard = ({ goal, onComplete, onDelete }: GoalCardProps) => {
       <CardContent className="p-4 pt-0">
         <p className="text-sm text-gray-300 line-clamp-2">{goal.description}</p>
         <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm">
-          <div className="flex items-center gap-1">
-            <Calendar className="h-4 w-4 text-gray-400 flex-shrink-0" />
-            <span className={`${isOverdue ? 'text-red-400' : 'text-gray-400'} whitespace-nowrap`}>
-              Due {formatDate(goal.deadline)}
-            </span>
-          </div>
           <div className="flex items-center gap-1">
             <Trophy className="h-4 w-4 text-gray-400 flex-shrink-0" />
             <span className="text-gray-400">{goal.streak} day streak</span>
