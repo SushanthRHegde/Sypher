@@ -2,12 +2,33 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { User, Github, Code2, Award, Share2, Palette } from 'lucide-react';
+import { User, Github, Code2, Award, Share2, Palette, Plus, X } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const Portfolio = () => {
-  const { user, profileData } = useAuth();
+  const { user, profileData, updateSkills } = useAuth();
   const [isPublic, setIsPublic] = useState(true);
   const [theme, setTheme] = useState('light');
+  const [showSkillDialog, setShowSkillDialog] = useState(false);
+  const [newSkill, setNewSkill] = useState({ name: '', level: '' });
+
+  const handleAddSkill = async () => {
+    if (newSkill.name && newSkill.level) {
+      const currentSkills = profileData?.skills || [];
+      const updatedSkills = [...currentSkills, newSkill];
+      await updateSkills(updatedSkills);
+      setNewSkill({ name: '', level: '' });
+      setShowSkillDialog(false);
+    }
+  };
+
+  const handleRemoveSkill = async (skillName: string) => {
+    const currentSkills = profileData?.skills || [];
+    const updatedSkills = currentSkills.filter(skill => skill.name !== skillName);
+    await updateSkills(updatedSkills);
+  };
 
   const stats = {
     leetcode: profileData?.leetcode ? {
@@ -32,13 +53,7 @@ const Portfolio = () => {
     }
   };
 
-  const skills = [
-    { name: 'JavaScript', level: 'Advanced' },
-    { name: 'React', level: 'Advanced' },
-    { name: 'Python', level: 'Intermediate' },
-    { name: 'Node.js', level: 'Intermediate' },
-    { name: 'TypeScript', level: 'Intermediate' },
-  ];
+  const skills = profileData?.skills || [];
 
   const projects = [
     {
@@ -155,16 +170,71 @@ const Portfolio = () => {
 
       {/* Skills Section */}
       <Card className="glass-card p-4 sm:p-6 mb-6 sm:mb-8">
-        <h3 className="text-lg sm:text-xl font-semibold mb-4">Skills & Expertise</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg sm:text-xl font-semibold">Skills & Expertise</h3>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowSkillDialog(true)}
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Add Skill
+          </Button>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           {skills.map((skill) => (
-            <div key={skill.name} className="p-3 sm:p-4 border rounded-lg bg-card/50">
+            <div key={skill.name} className="p-3 sm:p-4 border rounded-lg bg-card/50 relative group">
+              <button
+                onClick={() => handleRemoveSkill(skill.name)}
+                className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-destructive/10 transition-opacity"
+              >
+                <X className="h-4 w-4 text-destructive" />
+              </button>
               <div className="font-semibold text-sm sm:text-base">{skill.name}</div>
               <div className="text-xs sm:text-sm text-muted-foreground">{skill.level}</div>
             </div>
           ))}
         </div>
       </Card>
+
+      {/* Add Skill Dialog */}
+      <Dialog open={showSkillDialog} onOpenChange={setShowSkillDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add New Skill</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Input
+                placeholder="Skill name (e.g., JavaScript, Python)"
+                value={newSkill.name}
+                onChange={(e) => setNewSkill({ ...newSkill, name: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Select
+                value={newSkill.level}
+                onValueChange={(value) => setNewSkill({ ...newSkill, level: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select skill level" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Beginner">Beginner</SelectItem>
+                  <SelectItem value="Intermediate">Intermediate</SelectItem>
+                  <SelectItem value="Advanced">Advanced</SelectItem>
+                  <SelectItem value="Expert">Expert</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSkillDialog(false)}>Cancel</Button>
+            <Button onClick={handleAddSkill} disabled={!newSkill.name || !newSkill.level}>Add Skill</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Projects Section */}
       <Card className="glass-card p-4 sm:p-6">

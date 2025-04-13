@@ -15,6 +15,7 @@ interface AuthContextType {
   googleSignIn: () => Promise<void>;
   logout: () => Promise<void>;
   updateProfileLinks: (links: ProfileLinks) => void;
+  updateSkills: (skills: { name: string; level: string }[]) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -25,6 +26,7 @@ const AuthContext = createContext<AuthContextType>({
   googleSignIn: async () => {},
   logout: async () => {},
   updateProfileLinks: () => {},
+  updateSkills: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -117,8 +119,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const updateSkills = async (skills: { name: string; level: string }[]) => {
+    if (user && profileLinks) {
+      try {
+        const updatedProfileData = { ...profileData, skills };
+        await saveProfileData(user.uid, updatedProfileData, profileLinks);
+        setProfileData(updatedProfileData);
+        toast({
+          title: "Skills updated",
+          description: "Your skills have been successfully updated",
+        });
+      } catch (error) {
+        toast({
+          title: "Error updating skills",
+          description: "Could not update skills",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, profileLinks, profileData, googleSignIn, logout, updateProfileLinks }}>
+    <AuthContext.Provider value={{ user, loading, profileLinks, profileData, googleSignIn, logout, updateProfileLinks, updateSkills }}>
+
       {children}
       {showProfileDialog && (
         <ProfileLinksDialog 
