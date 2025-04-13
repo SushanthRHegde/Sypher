@@ -43,9 +43,11 @@ const Goals = () => {
       const goal = goals.find(g => g.id === goalId);
       if (goal) {
         const now = new Date();
-        const updatedHistory = goal.completionHistory || [];
+        const updatedHistory = [...(goal.completionHistory || [])];
         if (!goal.completed) {
           updatedHistory.push(now);
+        } else {
+          updatedHistory.pop(); // Remove the last completion date when uncompleting
         }
         await goalService.updateGoal(goalId, { 
           completed: !goal.completed,
