@@ -23,7 +23,10 @@ const Dashboard = () => {
   const [githubTrend, setGithubTrend] = useState({ value: 0, positive: true });
 
   useEffect(() => {
+    console.log('Profile Data Updated:', profileData);
+
     if (profileData?.leetcode) {
+      // console.log('LeetCode Data:', profileData.leetcode);
       setLeetcodeStats({
         easySolved: profileData.leetcode.easySolved || 0,
         totalEasy: profileData.leetcode.totalEasy || 0,
@@ -38,6 +41,7 @@ const Dashboard = () => {
     }
 
     if (profileData?.github?.contributions) {
+      // console.log('GitHub Data:', profileData.github);
       setGithubContributions(profileData.github.contributions.totalContributions);
       const yearlyTrend = (profileData.github.contributions.lastYearContributions / profileData.github.contributions.totalContributions) * 100;
       setGithubTrend({ value: Math.round(yearlyTrend), positive: yearlyTrend > 30 });
