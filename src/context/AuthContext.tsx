@@ -4,11 +4,13 @@ import { User } from 'firebase/auth';
 import { auth, onAuthStateChanged, signInWithGoogle, signOut } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import ProfileLinksDialog, { ProfileLinks } from '@/components/auth/ProfileLinksDialog';
+import { ProfileData, fetchAllProfiles } from '@/services/profileService';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   profileLinks: ProfileLinks | null;
+  profileData: ProfileData | null;
   googleSignIn: () => Promise<void>;
   logout: () => Promise<void>;
   updateProfileLinks: (links: ProfileLinks) => void;
@@ -18,6 +20,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   profileLinks: null,
+  profileData: null,
   googleSignIn: async () => {},
   logout: async () => {},
   updateProfileLinks: () => {},
@@ -30,6 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [showProfileDialog, setShowProfileDialog] = useState(false);
   const [profileLinks, setProfileLinks] = useState<ProfileLinks | null>(null);
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const { toast } = useToast();
 
   // Load profile links from localStorage
@@ -76,10 +80,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateProfileLinks = (links: ProfileLinks) => {
+  const updateProfileLinks = async (links: ProfileLinks) => {
     if (user) {
       setProfileLinks(links);
       localStorage.setItem(`profileLinks_${user.uid}`, JSON.stringify(links));
+      
+      // Fetch profile data when links are updated
+      const data = await fetchAllProfiles(links);
+      setProfileData(data);
     }
   };
 
@@ -100,7 +108,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, profileLinks, googleSignIn, logout, updateProfileLinks }}>
+    <AuthContext.Provider value={{ user, loading, profileLinks, profileData, googleSignIn, logout, updateProfileLinks }}>
       {children}
       {showProfileDialog && (
         <ProfileLinksDialog 
