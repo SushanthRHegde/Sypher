@@ -8,6 +8,10 @@ interface GitHubProfile {
   following: number;
   avatar_url: string;
   bio: string;
+  contributions: {
+    totalContributions: number;
+    lastYearContributions: number;
+  };
 }
 
 interface LeetCodeProfile {
@@ -33,8 +37,28 @@ export interface ProfileData {
 // Fetch GitHub Profile
 export const fetchGitHubProfile = async (username: string): Promise<GitHubProfile | null> => {
   try {
-    const response = await axios.get(`https://api.github.com/users/${username}`);
-    return response.data;
+    // Fetch basic profile data
+    const profileResponse = await axios.get(`https://api.github.com/users/${username}`);
+    
+    // Fetch public events to estimate contributions
+    const eventsResponse = await axios.get(`https://api.github.com/users/${username}/events/public`);
+    
+    // Count events in the last year as an estimate of contributions
+    const now = Date.now();
+    const oneYearAgo = now - 365 * 24 * 60 * 60 * 1000;
+    
+    const allEvents = eventsResponse.data.length;
+    const lastYearEvents = eventsResponse.data.filter(
+      (event: any) => new Date(event.created_at).getTime() > oneYearAgo
+    ).length;
+
+    return {
+      ...profileResponse.data,
+      contributions: {
+        totalContributions: allEvents,
+        lastYearContributions: lastYearEvents
+      }
+    };
   } catch (error) {
     console.error('Error fetching GitHub profile:', error);
     return null;

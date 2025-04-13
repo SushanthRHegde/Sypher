@@ -3,8 +3,31 @@ import { BarChart3, BookOpen, Code, Github, Target } from "lucide-react";
 import StatCard from "@/components/StatCard";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
+  const { profileData, profileLinks } = useAuth();
+  const [leetcodeSolved, setLeetcodeSolved] = useState(0);
+  const [githubContributions, setGithubContributions] = useState(0);
+  const [leetcodeTrend, setLeetcodeTrend] = useState({ value: 0, positive: true });
+  const [githubTrend, setGithubTrend] = useState({ value: 0, positive: true });
+
+  useEffect(() => {
+    if (profileData?.leetcode) {
+      setLeetcodeSolved(profileData.leetcode.totalSolved);
+      // Calculate trend based on acceptance rate
+      const trend = profileData.leetcode.acceptanceRate;
+      setLeetcodeTrend({ value: Math.round(trend), positive: trend > 50 });
+    }
+
+    if (profileData?.github?.contributions) {
+      setGithubContributions(profileData.github.contributions.totalContributions);
+      // Calculate trend based on last year's contributions
+      const yearlyTrend = (profileData.github.contributions.lastYearContributions / profileData.github.contributions.totalContributions) * 100;
+      setGithubTrend({ value: Math.round(yearlyTrend), positive: yearlyTrend > 30 });
+    }
+  }, [profileData]);
   return (
     <div className="p-6 md:p-8">
       <div className="mb-8">
@@ -18,15 +41,15 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard 
           title="LeetCode Problems" 
-          value="128"
+          value={leetcodeSolved}
           icon={<Code size={20} />}
-          trend={{ value: 12, positive: true }}
+          trend={leetcodeTrend}
         />
         <StatCard 
           title="GitHub Contributions" 
-          value="347"
+          value={githubContributions}
           icon={<Github size={20} />}
-          trend={{ value: 8, positive: true }}
+          trend={githubTrend}
         />
         <StatCard 
           title="Notes Created" 
