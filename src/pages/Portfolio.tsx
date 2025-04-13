@@ -4,9 +4,9 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User, Github, Code2, Award, Share2, Palette, Plus, X, Link as LinkIcon } from 'lucide-react';
 import ProfileLinksDialog from '@/components/auth/ProfileLinksDialog';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import SkillDialog from '@/components/portfolio/SkillDialog';
+import ProjectDialog from '@/components/portfolio/ProjectDialog';
+import CertificateDialog from '@/components/portfolio/CertificateDialog';
 
 interface Project {
   name: string;
@@ -303,43 +303,11 @@ const Portfolio = () => {
         </div>
       </Card>
 
-      {/* Add Skill Dialog */}
-      <Dialog open={showSkillDialog} onOpenChange={setShowSkillDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Add New Skill</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Input
-                placeholder="Skill name (e.g., JavaScript, Python)"
-                value={newSkill.name}
-                onChange={(e) => setNewSkill({ ...newSkill, name: e.target.value })}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Select
-                value={newSkill.level}
-                onValueChange={(value) => setNewSkill({ ...newSkill, level: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select skill level" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Beginner">Beginner</SelectItem>
-                  <SelectItem value="Intermediate">Intermediate</SelectItem>
-                  <SelectItem value="Advanced">Advanced</SelectItem>
-                  <SelectItem value="Expert">Expert</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowSkillDialog(false)}>Cancel</Button>
-            <Button onClick={handleAddSkill} disabled={!newSkill.name || !newSkill.level}>Add Skill</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <SkillDialog
+        isOpen={showSkillDialog}
+        onClose={() => setShowSkillDialog(false)}
+        onSave={handleAddSkill}
+      />
 
       <ProfileLinksDialog
         isOpen={showLinksDialog}
@@ -442,127 +410,17 @@ const Portfolio = () => {
         </div>
       </Card>
 
-      {/* Add Certificate Dialog */}
-      <Dialog open={showCertificateDialog} onOpenChange={setShowCertificateDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Add New Certificate</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Input
-                placeholder="Certificate name"
-                value={newCertificate.name}
-                onChange={(e) => setNewCertificate({ ...newCertificate, name: e.target.value })}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Input
-                placeholder="Organization/Company"
-                value={newCertificate.organization}
-                onChange={(e) => setNewCertificate({ ...newCertificate, organization: e.target.value })}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Input
-                type="date"
-                value={newCertificate.issueDate}
-                onChange={(e) => setNewCertificate({ ...newCertificate, issueDate: e.target.value })}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Input
-                placeholder="Verification URL"
-                value={newCertificate.verificationUrl}
-                onChange={(e) => setNewCertificate({ ...newCertificate, verificationUrl: e.target.value })}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCertificateDialog(false)}>Cancel</Button>
-            <Button
-              onClick={handleAddCertificate}
-              disabled={!newCertificate.name || !newCertificate.organization || !newCertificate.issueDate || !newCertificate.verificationUrl}
-            >
-              Add Certificate
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <CertificateDialog
+        isOpen={showCertificateDialog}
+        onClose={() => setShowCertificateDialog(false)}
+        onSave={handleAddCertificate}
+      />
 
-      {/* Add Project Dialog */}
-      <Dialog open={showProjectDialog} onOpenChange={setShowProjectDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Add New Project</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Input
-                placeholder="Project name"
-                value={newProject.name}
-                onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Input
-                placeholder="Project description"
-                value={newProject.description}
-                onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Input
-                placeholder="GitHub URL"
-                value={newProject.githubUrl}
-                onChange={(e) => setNewProject({ ...newProject, githubUrl: e.target.value })}
-              />
-            </div>
-            <div className="grid gap-2">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Add technology (e.g., React, Node.js)"
-                  value={newTechStack}
-                  onChange={(e) => setNewTechStack(e.target.value)}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleAddTechStack}
-                  disabled={!newTechStack}
-                >
-                  Add
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {newProject.techStack.map((tech) => (
-                  <span
-                    key={tech}
-                    className="px-2 py-1 bg-sypher-accent/10 text-sypher-accent rounded-full text-xs flex items-center gap-1"
-                  >
-                    {tech}
-                    <button
-                      onClick={() => handleRemoveTechStack(tech)}
-                      className="hover:text-destructive"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowProjectDialog(false)}>Cancel</Button>
-            <Button
-              onClick={handleAddProject}
-              disabled={!newProject.name || !newProject.description || newProject.techStack.length === 0 || !newProject.githubUrl}
-            >
-              Add Project
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ProjectDialog
+        isOpen={showProjectDialog}
+        onClose={() => setShowProjectDialog(false)}
+        onSave={handleAddProject}
+      />
     </div>
   );
 };
