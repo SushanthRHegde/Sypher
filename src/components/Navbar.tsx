@@ -48,7 +48,7 @@ const Navbar = () => {
         {/* Mobile Navigation Toggle */}
         <button 
           onClick={() => setIsOpen(!isOpen)} 
-          className="md:hidden text-gray-300"
+          className="md:hidden text-gray-300 hover:text-sypher-accent transition-colors"
         >
           {isOpen ? <X /> : <Menu />}
         </button>

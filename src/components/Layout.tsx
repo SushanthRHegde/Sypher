@@ -17,15 +17,6 @@ const Layout = ({ children, showSidebar = false }: LayoutProps) => {
       <Navbar />
       
       <div className="flex-grow pt-20 flex">
-        {/* Mobile Sidebar Toggle */}
-        {showSidebar && (
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="md:hidden fixed z-20 bottom-6 right-6 bg-sypher-accent rounded-full p-3 text-white shadow-lg"
-          >
-            <Menu size={24} />
-          </button>
-        )}
         
         {/* Sidebar */}
         {showSidebar && (
