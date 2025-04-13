@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { User, Github, Code2, Award, Share2, Palette, Plus, X, Link as LinkIcon, Edit } from 'lucide-react';
-import ProfileLinksDialog from '@/components/auth/ProfileLinksDialog';
+import { User, Github, Code2, Award, Share2, Plus, X, Edit } from 'lucide-react';
 import SkillDialog from '@/components/portfolio/SkillDialog';
 import ProjectDialog from '@/components/portfolio/ProjectDialog';
 import CertificateDialog from '@/components/portfolio/CertificateDialog';
@@ -27,7 +26,6 @@ const Portfolio = () => {
   const { user, profileData, updateSkills, updateProfileLinks, updateProjects, updateCertificates, updateBio } = useAuth();
   const [isPublic, setIsPublic] = useState(true);
   const [showSkillDialog, setShowSkillDialog] = useState(false);
-  const [showLinksDialog, setShowLinksDialog] = useState(false);
   const [showProjectDialog, setShowProjectDialog] = useState(false);
   const [showCertificateDialog, setShowCertificateDialog] = useState(false);
   const [showBioDialog, setShowBioDialog] = useState(false);
@@ -51,14 +49,10 @@ const Portfolio = () => {
     leetcode: profileData?.leetcode?.username || ''
   });
 
-  const handleAddSkill = async () => {
-    if (newSkill.name && newSkill.level) {
-      const currentSkills = profileData?.skills || [];
-      const updatedSkills = [...currentSkills, newSkill];
-      await updateSkills(updatedSkills);
-      setNewSkill({ name: '', level: '' });
-      setShowSkillDialog(false);
-    }
+  const handleAddSkill = async (skill: { name: string; level: string }) => {
+    const currentSkills = profileData?.skills || [];
+    const updatedSkills = [...currentSkills, skill];
+    await updateSkills(updatedSkills);
   };
 
   const handleRemoveSkill = async (skillName: string) => {
@@ -95,19 +89,10 @@ const Portfolio = () => {
   const projects = profileData?.projects || [];
   const certificates = profileData?.certificates || [];
 
-  const handleAddCertificate = async () => {
-    if (newCertificate.name && newCertificate.organization && newCertificate.issueDate && newCertificate.verificationUrl) {
-      const currentCertificates = profileData?.certificates || [];
-      const updatedCertificates = [...currentCertificates, newCertificate];
-      await updateCertificates(updatedCertificates);
-      setNewCertificate({
-        name: '',
-        organization: '',
-        issueDate: '',
-        verificationUrl: ''
-      });
-      setShowCertificateDialog(false);
-    }
+  const handleAddCertificate = async (certificate: Certificate) => {
+    const currentCertificates = profileData?.certificates || [];
+    const updatedCertificates = [...currentCertificates, certificate];
+    await updateCertificates(updatedCertificates);
   };
 
   const handleRemoveCertificate = async (certificateName: string) => {
@@ -116,19 +101,10 @@ const Portfolio = () => {
     await updateCertificates(updatedCertificates);
   };
 
-  const handleAddProject = async () => {
-    if (newProject.name && newProject.description && newProject.techStack.length > 0 && newProject.githubUrl) {
-      const currentProjects = profileData?.projects || [];
-      const updatedProjects = [...currentProjects, newProject];
-      await updateProjects(updatedProjects);
-      setNewProject({
-        name: '',
-        description: '',
-        techStack: [],
-        githubUrl: ''
-      });
-      setShowProjectDialog(false);
-    }
+  const handleAddProject = async (project: Project) => {
+    const currentProjects = profileData?.projects || [];
+    const updatedProjects = [...currentProjects, project];
+    await updateProjects(updatedProjects);
   };
 
   const handleAddTechStack = () => {
@@ -175,14 +151,6 @@ const Portfolio = () => {
           >
             <Edit className="h-4 w-4" />
             Edit Bio
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setShowLinksDialog(true)}
-            className="flex items-center gap-2 text-sm"
-          >
-            <LinkIcon className="h-4 w-4" />
-            Edit Links
           </Button>
         </div>
       </div>
@@ -309,20 +277,6 @@ const Portfolio = () => {
         isOpen={showSkillDialog}
         onClose={() => setShowSkillDialog(false)}
         onSave={handleAddSkill}
-      />
-
-      <ProfileLinksDialog
-        isOpen={showLinksDialog}
-        onClose={() => setShowLinksDialog(false)}
-        onSave={async (links) => {
-          await updateProfileLinks(links);
-          setShowLinksDialog(false);
-        }}
-        initialLinks={{
-          github: profileData?.github?.login || '',
-          leetcode: profileData?.leetcode?.username || '',
-          hackerrank: ''
-        }}
       />
 
       {/* Projects Section */}
