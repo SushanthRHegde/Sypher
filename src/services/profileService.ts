@@ -114,7 +114,12 @@ export const fetchAllProfiles = async (links: {
   github: string;
   leetcode: string;
 }): Promise<ProfileData> => {
-  const result: ProfileData = {};
+  const result: ProfileData = {
+    bio: '',
+    certificates: [],
+    projects: [],
+    skills: []
+  };
 
   if (links.github) {
     const githubData = await fetchGitHubProfile(links.github);

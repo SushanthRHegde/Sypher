@@ -12,6 +12,7 @@ import Dashboard from "@/pages/Dashboard";
 import Notes from "@/pages/Notes";
 import Portfolio from "@/pages/Portfolio";
 import NotFound from "./pages/NotFound";
+import Goals from "./pages/Goals";
 
 const queryClient = new QueryClient();
 
@@ -26,8 +27,11 @@ const App = () => (
             <Route path="/" element={<Layout><Index /></Layout>} />
             <Route path="/about" element={<Layout><About /></Layout>} />
             <Route path="/dashboard" element={<Layout ><Dashboard /></Layout>} />
+          
             <Route path="/notes" element={<Layout ><Notes /></Layout>} />
             <Route path="/portfolio" element={<Layout><Portfolio /></Layout>} />
+            <Route path="/goals" element={<Layout><Goals /></Layout>} />
+
             <Route path="*" element={<Layout><NotFound /></Layout>} />
           </Routes>
         </BrowserRouter>
