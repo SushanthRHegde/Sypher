@@ -43,7 +43,20 @@
 
 @layer utilities {
   .glass-card {
-    @apply bg-sypher-gray/70 backdrop-blur-sm border border-white/10 rounded-lg;
+    @apply bg-sypher-gray/70 backdrop-blur-sm rounded-lg relative overflow-hidden
+    border border-white/[0.08] shadow-[0_8px_16px_rgba(0,0,0,0.4)]
+    before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/[0.05] before:to-transparent
+    hover:shadow-[0_8px_25px_rgba(0,0,0,0.5)] hover:border-white/[0.12]
+    transition-all duration-300;
+  }
+
+  .glass-card:hover::before {
+    animation: shine 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes shine {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(100%); }
   }
   
   .text-gradient {
