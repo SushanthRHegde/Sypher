@@ -5,12 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Github, Code, ExternalLink, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { fetchGitHubProfile } from '@/services/profileService';
+import { fetchGitHubProfile, fetchLeetCodeProfile } from '@/services/profileService';
 
 interface ProfileLinksDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (links: ProfileLinks) => void;
+  initialLinks?: ProfileLinks;
 }
 
 export interface ProfileLinks {
@@ -19,8 +20,8 @@ export interface ProfileLinks {
   hackerrank: string;
 }
 
-const ProfileLinksDialog = ({ isOpen, onClose, onSave }: ProfileLinksDialogProps) => {
-  const [links, setLinks] = useState<ProfileLinks>({
+const ProfileLinksDialog = ({ isOpen, onClose, onSave, initialLinks }: ProfileLinksDialogProps) => {
+  const [links, setLinks] = useState<ProfileLinks>(initialLinks || {
     github: '',
     leetcode: '',
     hackerrank: ''
@@ -35,6 +36,8 @@ const ProfileLinksDialog = ({ isOpen, onClose, onSave }: ProfileLinksDialogProps
   const handleSave = async () => {
     setIsValidating(true);
     try {
+      let hasValidationError = false;
+
       // Validate GitHub username
       if (links.github) {
         const githubProfile = await fetchGitHubProfile(links.github);
@@ -44,12 +47,29 @@ const ProfileLinksDialog = ({ isOpen, onClose, onSave }: ProfileLinksDialogProps
             description: "Please check your GitHub username and try again",
             variant: "destructive",
           });
-          setIsValidating(false);
-          return;
+          hasValidationError = true;
         }
       }
 
-      // Save the links if validation passes
+      // Validate LeetCode username
+      if (links.leetcode) {
+        const leetcodeProfile = await fetchLeetCodeProfile(links.leetcode);
+        if (!leetcodeProfile) {
+          toast({
+            title: "Invalid LeetCode username",
+            description: "Please check your LeetCode username and try again",
+            variant: "destructive",
+          });
+          hasValidationError = true;
+        }
+      }
+
+      if (hasValidationError) {
+        setIsValidating(false);
+        return;
+      }
+
+      // Save the links if all validations pass
       await onSave(links);
       toast({
         title: "Profile links saved",
@@ -57,9 +77,10 @@ const ProfileLinksDialog = ({ isOpen, onClose, onSave }: ProfileLinksDialogProps
       });
       onClose();
     } catch (error) {
+      console.error('Profile save error:', error);
       toast({
         title: "Error saving profile links",
-        description: "Please try again later",
+        description: error instanceof Error ? error.message : "Please try again later",
         variant: "destructive",
       });
     } finally {
@@ -79,21 +100,43 @@ const ProfileLinksDialog = ({ isOpen, onClose, onSave }: ProfileLinksDialogProps
         <div className="grid gap-4 py-4">
           <div className="flex items-center gap-4">
             <Github className="h-5 w-5 text-gray-400" />
-            <Input
-              placeholder="GitHub username"
-              value={links.github}
-              onChange={(e) => handleChange('github', e.target.value)}
-              className="flex-1"
-            />
+            <div className="flex-1 relative">
+              <Input
+                placeholder="GitHub username"
+                value={links.github}
+                onChange={(e) => handleChange('github', e.target.value)}
+                className="w-full"
+              />
+              {links.github && (
+                <Button
+                  variant="ghost"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 h-6"
+                  onClick={() => window.open(`https://github.com/${links.github}`, '_blank')}
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <Code className="h-5 w-5 text-gray-400" />
-            <Input
-              placeholder="LeetCode username"
-              value={links.leetcode}
-              onChange={(e) => handleChange('leetcode', e.target.value)}
-              className="flex-1"
-            />
+            <div className="flex-1 relative">
+              <Input
+                placeholder="LeetCode username"
+                value={links.leetcode}
+                onChange={(e) => handleChange('leetcode', e.target.value)}
+                className="w-full"
+              />
+              {links.leetcode && (
+                <Button
+                  variant="ghost"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 h-6"
+                  onClick={() => window.open(`https://leetcode.com/${links.leetcode}`, '_blank')}
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
           </div>
           {/* <div className="flex items-center gap-4">
             <ExternalLink className="h-5 w-5 text-gray-400" />

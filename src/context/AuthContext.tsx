@@ -125,6 +125,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           isOpen={showProfileDialog}
           onClose={() => setShowProfileDialog(false)}
           onSave={updateProfileLinks}
+          initialLinks={profileLinks || undefined}
         />
       )}
     </AuthContext.Provider>
