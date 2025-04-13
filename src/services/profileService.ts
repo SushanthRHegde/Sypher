@@ -15,6 +15,10 @@ interface GitHubProfile {
 }
 
 interface LeetCodeProfile {
+  totalEasy: number;
+  totalMedium: number;
+  totalHard: number;
+  contributionPoints: number;
   username: string;
   totalSolved: number;
   totalQuestions: number;
@@ -83,6 +87,10 @@ export const fetchLeetCodeProfile = async (username: string): Promise<LeetCodePr
 
     return {
       username: username,
+      totalEasy: data.totalEasy || 0,
+      totalMedium: data.totalMedium || 0,
+      totalHard: data.totalHard || 0,
+      contributionPoints: data.contributionPoints || 0,
       totalSolved: data.totalSolved || 0,
       totalQuestions: data.totalQuestions || 0,
       easySolved: data.easySolved || 0,

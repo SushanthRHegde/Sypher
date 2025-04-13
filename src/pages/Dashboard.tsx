@@ -8,22 +8,37 @@ import { useEffect, useState } from "react";
 
 const Dashboard = () => {
   const { profileData, profileLinks } = useAuth();
-  const [leetcodeSolved, setLeetcodeSolved] = useState(0);
+  const [leetcodeStats, setLeetcodeStats] = useState({
+    easySolved: 0,
+    totalEasy: 0,
+    mediumSolved: 0,
+    totalMedium: 0,
+    hardSolved: 0,
+    totalHard: 0,
+    acceptanceRate: 0,
+    ranking: 0,
+    contributionPoints: 0
+  });
   const [githubContributions, setGithubContributions] = useState(0);
-  const [leetcodeTrend, setLeetcodeTrend] = useState({ value: 0, positive: true });
   const [githubTrend, setGithubTrend] = useState({ value: 0, positive: true });
 
   useEffect(() => {
     if (profileData?.leetcode) {
-      setLeetcodeSolved(profileData.leetcode.totalSolved);
-      // Calculate trend based on acceptance rate
-      const trend = profileData.leetcode.acceptanceRate;
-      setLeetcodeTrend({ value: Math.round(trend), positive: trend > 50 });
+      setLeetcodeStats({
+        easySolved: profileData.leetcode.easySolved || 0,
+        totalEasy: profileData.leetcode.totalEasy || 0,
+        mediumSolved: profileData.leetcode.mediumSolved || 0,
+        totalMedium: profileData.leetcode.totalMedium || 0,
+        hardSolved: profileData.leetcode.hardSolved || 0,
+        totalHard: profileData.leetcode.totalHard || 0,
+        acceptanceRate: profileData.leetcode.acceptanceRate || 0,
+        ranking: profileData.leetcode.ranking || 0,
+        contributionPoints: profileData.leetcode.contributionPoints || 0
+      });
     }
 
     if (profileData?.github?.contributions) {
       setGithubContributions(profileData.github.contributions.totalContributions);
-      // Calculate trend based on last year's contributions
       const yearlyTrend = (profileData.github.contributions.lastYearContributions / profileData.github.contributions.totalContributions) * 100;
       setGithubTrend({ value: Math.round(yearlyTrend), positive: yearlyTrend > 30 });
     }
@@ -37,31 +52,61 @@ const Dashboard = () => {
         </p>
       </div>
       
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard 
-          title="LeetCode Problems" 
-          value={leetcodeSolved}
-          icon={<Code size={20} />}
-          trend={leetcodeTrend}
-        />
+      {/* LeetCode Section */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-4">LeetCode Progress</h2>
+        <div className="">
+          {/* Problem Solving Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+            <StatCard 
+              title="Easy Problems" 
+              value={leetcodeStats.easySolved.toString()}
+              icon={<Code size={20} />}
+            />
+            <StatCard 
+              title="Medium Problems" 
+              value={leetcodeStats.mediumSolved.toString()}
+              icon={<Code size={20} />}
+            />
+            <StatCard 
+              title="Hard Problems" 
+              value={leetcodeStats.hardSolved.toString()}
+              icon={<Code size={20} />}
+            />
+          </div>
+
+          {/* Additional LeetCode Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <StatCard 
+              title="Acceptance Rate" 
+              value={`${leetcodeStats.acceptanceRate.toFixed(1)}%`}
+              icon={<Target size={20} />}
+              trend={{ value: Math.round(leetcodeStats.acceptanceRate), positive: leetcodeStats.acceptanceRate > 50 }}
+            />
+            <StatCard 
+              title="LeetCode Ranking" 
+              value={leetcodeStats.ranking.toLocaleString()}
+              icon={<BarChart3 size={20} />}
+            />
+            <StatCard 
+              title="Contribution Points" 
+              value={leetcodeStats.contributionPoints}
+              icon={<Target size={20} />}
+              // trend={{ value: 5, positive: true }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* GitHub Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 gap-6 mb-8">
+      <h2 className="text-xl font-semibold mb-4">GitHub Progress</h2>
+
         <StatCard 
           title="GitHub Contributions" 
           value={githubContributions}
           icon={<Github size={20} />}
           trend={githubTrend}
-        />
-        <StatCard 
-          title="Notes Created" 
-          value="24"
-          icon={<BookOpen size={20} />}
-          trend={{ value: 5, positive: true }}
-        />
-        <StatCard 
-          title="Goals Completed" 
-          value="7"
-          icon={<Target size={20} />}
-          trend={{ value: 2, positive: false }}
         />
       </div>
       
