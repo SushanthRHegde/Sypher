@@ -81,7 +81,7 @@ const Portfolio = () => {
       </div>
 
       {/* Profile Section */}
-      <Card className="p-4 sm:p-6 mb-6 sm:mb-8">
+      <Card className="glass-card p-4 sm:p-6 mb-6 sm:mb-8">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
           <div className="w-24 sm:w-32 h-24 sm:h-32 rounded-full bg-sypher-accent flex items-center justify-center flex-shrink-0">
             {user?.photoURL ? (
@@ -116,37 +116,37 @@ const Portfolio = () => {
 
       {/* Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
-        <Card className="p-4 sm:p-6 bg-card">
+        <Card className="glass-card p-4 sm:p-6">
           <h3 className="text-lg sm:text-xl font-semibold mb-4">LeetCode Statistics</h3>
           <div className="grid grid-cols-3 gap-3 sm:gap-4 text-center">
-            <div className="p-2 rounded-lg bg-green-100/10">
+            <div className="p-2 rounded-lg bg-green-500/10">
               <div className="text-xl sm:text-2xl font-bold text-green-500">{stats.leetcode.easyCount}</div>
               <div className="text-xs sm:text-sm text-muted-foreground">Easy</div>
             </div>
-            <div className="p-2 rounded-lg bg-yellow-100/10">
+            <div className="p-2 rounded-lg bg-yellow-500/10">
               <div className="text-xl sm:text-2xl font-bold text-yellow-500">{stats.leetcode.mediumCount}</div>
               <div className="text-xs sm:text-sm text-muted-foreground">Medium</div>
             </div>
-            <div className="p-2 rounded-lg bg-red-100/10">
+            <div className="p-2 rounded-lg bg-red-500/10">
               <div className="text-xl sm:text-2xl font-bold text-red-500">{stats.leetcode.hardCount}</div>
               <div className="text-xs sm:text-sm text-muted-foreground">Hard</div>
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 sm:p-6 bg-card">
+        <Card className="glass-card p-4 sm:p-6">
           <h3 className="text-lg sm:text-xl font-semibold mb-4">GitHub Activity</h3>
           <div className="grid grid-cols-3 gap-3 sm:gap-4 text-center">
-            <div className="p-2 rounded-lg bg-card/50">
-              <div className="text-xl sm:text-2xl font-bold">{stats.github.repositories}</div>
+            <div className="p-2 rounded-lg bg-sypher-accent/10">
+              <div className="text-xl sm:text-2xl font-bold text-sypher-accent">{stats.github.repositories}</div>
               <div className="text-xs sm:text-sm text-muted-foreground">Repositories</div>
             </div>
-            <div className="p-2 rounded-lg bg-card/50">
-              <div className="text-xl sm:text-2xl font-bold">{stats.github.followers} </div>
+            <div className="p-2 rounded-lg bg-sypher-accent/10">
+              <div className="text-xl sm:text-2xl font-bold text-sypher-accent">{stats.github.followers} </div>
               <div className="text-xs sm:text-sm text-muted-foreground">Followers</div>
             </div>
-            <div className="p-2 rounded-lg bg-card/50">
-              <div className="text-xl sm:text-2xl font-bold">{stats.github.stars}</div>
+            <div className="p-2 rounded-lg bg-sypher-accent/10">
+              <div className="text-xl sm:text-2xl font-bold text-sypher-accent">{stats.github.stars}</div>
               <div className="text-xs sm:text-sm text-muted-foreground">Stars</div>
             </div>
           </div>
@@ -154,7 +154,7 @@ const Portfolio = () => {
       </div>
 
       {/* Skills Section */}
-      <Card className="p-4 sm:p-6 mb-6 sm:mb-8 bg-card">
+      <Card className="glass-card p-4 sm:p-6 mb-6 sm:mb-8">
         <h3 className="text-lg sm:text-xl font-semibold mb-4">Skills & Expertise</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           {skills.map((skill) => (
@@ -167,11 +167,11 @@ const Portfolio = () => {
       </Card>
 
       {/* Projects Section */}
-      <Card className="p-4 sm:p-6 bg-card">
+      <Card className="glass-card p-4 sm:p-6">
         <h3 className="text-lg sm:text-xl font-semibold mb-4">Featured Projects</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {projects.map((project) => (
-            <div key={project.name} className="border rounded-lg p-3 sm:p-4 bg-card/50">
+            <div key={project.name} className="glass-card p-3 sm:p-4">
               <h4 className="text-base sm:text-lg font-semibold mb-2">{project.name}</h4>
               <p className="text-sm text-muted-foreground mb-3">{project.description}</p>
               <div className="flex flex-wrap gap-2 mb-4">
