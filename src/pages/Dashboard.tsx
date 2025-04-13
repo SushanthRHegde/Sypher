@@ -44,7 +44,7 @@ const Dashboard = () => {
     }
   }, [profileData]);
   return (
-    <div className="p-6 md:p-8">
+    <div className="p-6 md:p-10 max-w-6xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
         <p className="text-gray-400">
@@ -99,15 +99,31 @@ const Dashboard = () => {
       </div>
 
       {/* GitHub Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 gap-6 mb-8">
-      <h2 className="text-xl font-semibold mb-4">GitHub Progress</h2>
-
-        <StatCard 
-          title="GitHub Contributions" 
-          value={githubContributions}
-          icon={<Github size={20} />}
-          trend={githubTrend}
-        />
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-4">GitHub Progress</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard 
+            title="Total Contributions" 
+            value={githubContributions}
+            icon={<Github size={20} />}
+            trend={githubTrend}
+          />
+          <StatCard 
+            title="Repositories" 
+            value={profileData?.github?.public_repos || 0}
+            icon={<Github size={20} />}
+          />
+          <StatCard 
+            title="Followers" 
+            value={profileData?.github?.followers || 0}
+            icon={<Github size={20} />}
+          />
+          <StatCard 
+            title="Following" 
+            value={profileData?.github?.following || 0}
+            icon={<Github size={20} />}
+          />
+        </div>
       </div>
       
       {/* Recent Activity */}
