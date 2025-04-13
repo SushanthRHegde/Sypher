@@ -2,17 +2,23 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { User, Github, Code2, Award, Share2, Palette, Plus, X } from 'lucide-react';
+import { User, Github, Code2, Award, Share2, Palette, Plus, X, Link as LinkIcon } from 'lucide-react';
+import ProfileLinksDialog from '@/components/auth/ProfileLinksDialog';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const Portfolio = () => {
-  const { user, profileData, updateSkills } = useAuth();
+  const { user, profileData, updateSkills, updateProfileLinks } = useAuth();
   const [isPublic, setIsPublic] = useState(true);
   const [theme, setTheme] = useState('light');
   const [showSkillDialog, setShowSkillDialog] = useState(false);
+  const [showLinksDialog, setShowLinksDialog] = useState(false);
   const [newSkill, setNewSkill] = useState({ name: '', level: '' });
+  const [links, setLinks] = useState({
+    github: profileData?.github?.login || '',
+    leetcode: profileData?.leetcode?.username || ''
+  });
 
   const handleAddSkill = async () => {
     if (newSkill.name && newSkill.level) {
@@ -92,6 +98,14 @@ const Portfolio = () => {
             <Palette className="h-4 w-4" />
             Theme
           </Button>
+          <Button
+            variant="outline"
+            onClick={() => setShowLinksDialog(true)}
+            className="flex items-center gap-2 text-sm"
+          >
+            <LinkIcon className="h-4 w-4" />
+            Edit Links
+          </Button>
         </div>
       </div>
 
@@ -116,14 +130,26 @@ const Portfolio = () => {
               Experienced in modern web technologies and best practices.
             </p>
             <div className="flex gap-3 justify-center sm:justify-start">
-              <Button variant="outline" className="flex items-center gap-2 text-sm">
-                <Github className="h-4 w-4" />
-                GitHub
-              </Button>
-              <Button variant="outline" className="flex items-center gap-2 text-sm">
-                <Code2 className="h-4 w-4" />
-                LeetCode
-              </Button>
+              {profileData?.github?.login && (
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 text-sm"
+                  onClick={() => window.open(`https://github.com/${profileData.github.login}`, '_blank')}
+                >
+                  <Github className="h-4 w-4" />
+                  {profileData.github.login}
+                </Button>
+              )}
+              {profileData?.leetcode?.username && (
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 text-sm"
+                  onClick={() => window.open(`https://leetcode.com/${profileData.leetcode.username}`, '_blank')}
+                >
+                  <Code2 className="h-4 w-4" />
+                  {profileData.leetcode.username}
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -235,6 +261,20 @@ const Portfolio = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ProfileLinksDialog
+        isOpen={showLinksDialog}
+        onClose={() => setShowLinksDialog(false)}
+        onSave={async (links) => {
+          await updateProfileLinks(links);
+          setShowLinksDialog(false);
+        }}
+        initialLinks={{
+          github: profileData?.github?.login || '',
+          leetcode: profileData?.leetcode?.username || '',
+          hackerrank: ''
+        }}
+      />
 
       {/* Projects Section */}
       <Card className="glass-card p-4 sm:p-6">

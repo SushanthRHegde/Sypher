@@ -1,10 +1,11 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import GoogleSignIn from "@/components/auth/GoogleSignIn";
 import { useAuth } from "@/context/AuthContext";
+import { cn } from "@/lib/utils";
 
 const navLinks = [
   { name: "About", path: "/about" },
@@ -18,6 +19,7 @@ const navLinks = [
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth();
+  const location = useLocation();
 
   return (
     <nav className="fixed w-full px-4 py-3 z-50">
@@ -31,15 +33,21 @@ const Navbar = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link 
-              key={link.name} 
-              to={link.path}
-              className="text-gray-300 hover:text-sypher-accent transition-colors"
-            >
-              {link.name}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = location.pathname === link.path;
+            return (
+              <Link 
+                key={link.name} 
+                to={link.path}
+                className={cn(
+                  "text-gray-300 hover:text-sypher-accent transition-colors px-3 py-2 block",
+                  isActive && "text-sypher-accent"
+                )}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
         </div>
 
         <div className="hidden md:flex items-center gap-4">
@@ -58,16 +66,22 @@ const Navbar = () => {
       {/* Mobile Navigation Menu */}
       {isOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 glass-card mt-2 py-4 px-4 flex flex-col gap-4">
-          {navLinks.map((link) => (
-            <Link 
-              key={link.name} 
-              to={link.path}
-              onClick={() => setIsOpen(false)}
-              className="text-gray-300 hover:text-sypher-accent transition-colors"
-            >
-              {link.name}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = location.pathname === link.path;
+            return (
+              <Link 
+                key={link.name} 
+                to={link.path}
+                onClick={() => setIsOpen(false)}
+                className={cn(
+                  "text-gray-300 hover:text-sypher-accent transition-colors px-3 py-2 block w-full",
+                  isActive && "text-sypher-accent"
+                )}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
           <div className="py-2">
             <GoogleSignIn />
           </div>
