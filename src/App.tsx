@@ -10,6 +10,7 @@ import Index from "@/pages/Index";
 import About from "@/pages/About";
 import Dashboard from "@/pages/Dashboard";
 import Notes from "@/pages/Notes";
+import Portfolio from "@/pages/Portfolio";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,8 +25,9 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Layout><Index /></Layout>} />
             <Route path="/about" element={<Layout><About /></Layout>} />
-            <Route path="/dashboard" element={<Layout showSidebar><Dashboard /></Layout>} />
-            <Route path="/notes" element={<Layout showSidebar><Notes /></Layout>} />
+            <Route path="/dashboard" element={<Layout ><Dashboard /></Layout>} />
+            <Route path="/notes" element={<Layout ><Notes /></Layout>} />
+            <Route path="/portfolio" element={<Layout><Portfolio /></Layout>} />
             <Route path="*" element={<Layout><NotFound /></Layout>} />
           </Routes>
         </BrowserRouter>
