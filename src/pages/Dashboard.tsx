@@ -89,10 +89,9 @@ const Dashboard = () => {
               icon={<BarChart3 size={20} />}
             />
             <StatCard 
-              title="Contribution Points" 
-              value={leetcodeStats.contributionPoints}
+              title="Total Problems Solved" 
+              value={(leetcodeStats.easySolved + leetcodeStats.mediumSolved + leetcodeStats.hardSolved).toString()}
               icon={<Target size={20} />}
-              // trend={{ value: 5, positive: true }}
             />
           </div>
         </div>
