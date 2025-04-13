@@ -1,9 +1,15 @@
 
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, LogIn, Settings } from 'lucide-react';
+import { LogOut, LogIn, Settings, User } from 'lucide-react';
 import { useState } from 'react';
 import ProfileLinksDialog from './ProfileLinksDialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const GoogleSignIn = () => {
   const { user, profileLinks, googleSignIn, logout, updateProfileLinks } = useAuth();
@@ -13,33 +19,37 @@ const GoogleSignIn = () => {
     <div>
       {user ? (
         <div className="flex items-center gap-2">
-          {user.photoURL && (
-            <img 
-              src={user.photoURL} 
-              alt={user.displayName || 'User'} 
-              className="w-8 h-8 rounded-full"
-            />
-          )}
-          <div className="hidden md:block">
-            <p className="text-sm font-medium">{user.displayName}</p>
-            <p className="text-xs text-gray-400">{user.email}</p>
-          </div>
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={() => setShowProfileDialog(true)}
-            className="text-gray-400 hover:text-white"
-          >
-            <Settings className="h-4 w-4" />
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={logout}
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            <span className="hidden md:inline">Sign Out</span>
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="flex items-center gap-2 cursor-pointer hover:opacity-80">
+                {user.photoURL ? (
+                  <img 
+                    src={user.photoURL} 
+                    alt={user.displayName || 'User'} 
+                    className="w-8 h-8 rounded-full"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-sypher-accent flex items-center justify-center">
+                    <User className="h-4 w-4 text-white" />
+                  </div>
+                )}
+                <div className="hidden md:block">
+                  <p className="text-sm font-medium">{user.displayName}</p>
+                  <p className="text-xs text-gray-400">{user.email}</p>
+                </div>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={() => setShowProfileDialog(true)}>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={logout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Sign Out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           <ProfileLinksDialog 
             isOpen={showProfileDialog}

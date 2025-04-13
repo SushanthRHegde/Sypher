@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Download, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import GoogleSignIn from "@/components/auth/GoogleSignIn";
 import { useAuth } from "@/context/AuthContext";
@@ -43,12 +43,6 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center gap-4">
           <GoogleSignIn />
-          {user && (
-            <Button variant="outline" className="flex gap-2 items-center">
-              <Download size={16} />
-              Export CV
-            </Button>
-          )}
         </div>
 
         {/* Mobile Navigation Toggle */}
@@ -76,12 +70,6 @@ const Navbar = () => {
           <div className="py-2">
             <GoogleSignIn />
           </div>
-          {user && (
-            <Button variant="outline" className="flex gap-2 items-center w-full justify-center">
-              <Download size={16} />
-              Export CV
-            </Button>
-          )}
         </div>
       )}
     </nav>
