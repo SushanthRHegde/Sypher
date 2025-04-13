@@ -5,6 +5,7 @@ import { auth, onAuthStateChanged, signInWithGoogle, signOut } from '@/lib/fireb
 import { useToast } from '@/hooks/use-toast';
 import ProfileLinksDialog, { ProfileLinks } from '@/components/auth/ProfileLinksDialog';
 import { ProfileData, fetchAllProfiles } from '@/services/profileService';
+import { saveProfileData, fetchProfileData } from '@/lib/firestore';
 
 interface AuthContextType {
   user: User | null;
@@ -36,14 +37,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const { toast } = useToast();
 
-  // Load profile links from localStorage
+  // Load profile data from Firestore
   useEffect(() => {
-    if (user) {
-      const savedLinks = localStorage.getItem(`profileLinks_${user.uid}`);
-      if (savedLinks) {
-        setProfileLinks(JSON.parse(savedLinks));
+    const loadProfileData = async () => {
+      if (user) {
+        const savedData = await fetchProfileData(user.uid);
+        if (savedData) {
+          setProfileLinks(savedData.profileLinks);
+          setProfileData(savedData.profileData);
+        }
       }
-    }
+    };
+    loadProfileData();
   }, [user]);
 
   useEffect(() => {
@@ -64,11 +69,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           description: "Welcome to SYPHER!",
         });
         
-        // Check if this user has profile links already
-        const savedLinks = localStorage.getItem(`profileLinks_${signedInUser.uid}`);
-        if (!savedLinks) {
-          // Show dialog only for first time users or those without profile links
+        // Check if this user has profile data in Firestore
+        const savedData = await fetchProfileData(signedInUser.uid);
+        if (!savedData) {
+          // Show dialog only for first time users or those without profile data
           setShowProfileDialog(true);
+        } else {
+          setProfileLinks(savedData.profileLinks);
+          setProfileData(savedData.profileData);
         }
       }
     } catch (error) {
@@ -83,11 +91,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const updateProfileLinks = async (links: ProfileLinks) => {
     if (user) {
       setProfileLinks(links);
-      localStorage.setItem(`profileLinks_${user.uid}`, JSON.stringify(links));
       
       // Fetch profile data when links are updated
       const data = await fetchAllProfiles(links);
       setProfileData(data);
+
+      // Save both profile links and data to Firestore
+      await saveProfileData(user.uid, data, links);
     }
   };
 

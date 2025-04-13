@@ -10,7 +10,7 @@ import {
 } from "firebase/auth";
 
 // Your web app's Firebase configuration
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyCjPrk05XU9dTZRduNh98lV11zCNBGFc8g",
   authDomain: "sypher-8719a.firebaseapp.com",
   projectId: "sypher-8719a",
