@@ -15,6 +15,7 @@ import Portfolio from "@/pages/Portfolio";
 import NotFound from "./pages/NotFound";
 import Goals from "./pages/Goals";
 import ViewNote from "./pages/notes/ViewNote";
+import Community from "./pages/Community";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
 
             <Route path="/portfolio" element={<Layout><Portfolio /></Layout>} />
             <Route path="/goals" element={<Layout><Goals /></Layout>} />
+            <Route path="/community" element={<Layout><Community /></Layout>} />
 
             <Route path="*" element={<Layout><NotFound /></Layout>} />
           </Routes>
