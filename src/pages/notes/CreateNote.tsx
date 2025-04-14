@@ -75,7 +75,7 @@ const CreateNote = () => {
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className={`text-2xl md:text-3xl font-semibold bg-transparent border-0 px-0 h-auto focus-visible:ring-0 ${errors.title ? 'placeholder:text-red-500' : ''}`}
+              className={`text-2xl md:text-3xl font-semibold bg-transparent border-0 px-4 py-3 md:px-0 md:py-0 h-auto focus-visible:ring-0 ${errors.title ? 'placeholder:text-red-500' : ''}`}
               placeholder="Untitled"
             />
             {errors.title && (
@@ -88,7 +88,7 @@ const CreateNote = () => {
               id="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className={`min-h-[calc(100vh-300px)] text-base md:text-lg leading-relaxed bg-transparent border-0 focus-visible:ring-0 resize-none p-0 ${errors.content ? 'placeholder:text-red-500' : ''}`}
+              className={`min-h-[calc(100vh-300px)] text-base md:text-lg leading-relaxed bg-transparent border-0 focus-visible:ring-0 resize-none px-4 py-3 md:p-0 ${errors.content ? 'placeholder:text-red-500' : ''}`}
               placeholder="Start writing..."
             />
             {errors.content && (
@@ -126,12 +126,12 @@ const CreateNote = () => {
                       onChange={(e) => setTagInput(e.target.value)}
                       onKeyDown={handleAddTag}
                       placeholder="Type a tag and press Enter"
-                      className="bg-sypher-gray/10 hover:bg-sypher-gray/20 focus:bg-sypher-gray/20 border-0 rounded-full px-3 py-1.5 h-auto focus-visible:ring-1 focus-visible:ring-sypher-accent text-sm transition-colors"
+                      className="bg-sypher-gray/10 hover:bg-sypher-gray/20 focus:bg-sypher-gray/20 border-0 rounded-full px-4 py-2 md:px-3 md:py-1.5 h-auto focus-visible:ring-1 focus-visible:ring-sypher-accent text-sm transition-colors"
                     />
                   </div>
                 </div>
               </div>
-              <div className="flex gap-4">
+              <div className="flex justify-center md:justify-end gap-4">
                 <Button
                   variant="ghost"
                   onClick={() => navigate('/notes')}

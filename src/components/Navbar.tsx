@@ -21,17 +21,17 @@ const Navbar = () => {
   const location = useLocation();
 
   return (
-    <nav className="fixed w-full px-4 py-3 z-50">
-      <div className="max-w-7xl mx-auto glass-card px-4 py-3 flex justify-between items-center">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="h-10 w-10 rounded-full bg-sypher-accent flex items-center justify-center text-white font-bold">
+    <nav className="fixed w-full px-2 sm:px-4 py-2 sm:py-3 z-50">
+      <div className="max-w-7xl mx-auto glass-card px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center relative">
+        <Link to="/" className="flex items-center gap-1 sm:gap-2">
+          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-sypher-accent flex items-center justify-center text-white font-bold text-sm sm:text-base">
             S
           </div>
-          <span className="font-bold text-xl">SYPHER</span>
+          <span className="font-bold text-lg sm:text-xl">SYPHER</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-6 xl:gap-8">
           {navLinks.map((link) => {
             const isActive = location.pathname === link.path;
             return (
@@ -39,7 +39,7 @@ const Navbar = () => {
                 key={link.name} 
                 to={link.path}
                 className={cn(
-                  "text-gray-300 hover:text-sypher-accent transition-colors px-3 py-2 block",
+                  "text-gray-300 hover:text-sypher-accent transition-colors px-2 sm:px-3 py-2 block text-sm sm:text-base",
                   isActive && "text-sypher-accent"
                 )}
               >
@@ -49,22 +49,23 @@ const Navbar = () => {
           })}
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden lg:flex items-center gap-4">
           <GoogleSignIn />
         </div>
 
         {/* Mobile Navigation Toggle */}
         <button 
           onClick={() => setIsOpen(!isOpen)} 
-          className="md:hidden text-gray-300 hover:text-sypher-accent transition-colors"
+          className="lg:hidden text-gray-300 hover:text-sypher-accent transition-colors p-2 sm:p-3"
+          aria-label="Toggle navigation menu"
         >
-          {isOpen ? <X /> : <Menu />}
+          {isOpen ? <X className="h-5 w-5 sm:h-6 sm:w-6" /> : <Menu className="h-5 w-5 sm:h-6 sm:w-6" />}
         </button>
       </div>
 
       {/* Mobile Navigation Menu */}
       {isOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 glass-card mt-2 py-4 px-4 flex flex-col gap-4">
+        <div className="lg:hidden absolute top-full left-0 right-0 bg-[#1a1a1a] mt-1 sm:mt-2 py-3 sm:py-4 px-3 sm:px-4 flex flex-col gap-2 sm:gap-4 animate-in slide-in-from-top duration-200 border border-gray-800">
           {navLinks.map((link) => {
             const isActive = location.pathname === link.path;
             return (
@@ -73,7 +74,7 @@ const Navbar = () => {
                 to={link.path}
                 onClick={() => setIsOpen(false)}
                 className={cn(
-                  "text-gray-300 hover:text-sypher-accent transition-colors px-3 py-2 block w-full",
+                  "text-gray-300 hover:text-sypher-accent transition-colors px-2 sm:px-3 py-2 block w-full text-sm sm:text-base",
                   isActive && "text-sypher-accent"
                 )}
               >
@@ -81,7 +82,7 @@ const Navbar = () => {
               </Link>
             );
           })}
-          <div className="py-2">
+          <div className="py-2 sm:py-3">
             <GoogleSignIn />
           </div>
         </div>
