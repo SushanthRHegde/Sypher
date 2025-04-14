@@ -1,4 +1,4 @@
-import {getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, where, orderBy, Timestamp } from 'firebase/firestore';
+import {getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDocs, getDoc, query, where, orderBy, Timestamp } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
 // Firebase configuration object
 import {firebaseConfig} from '../lib/firebase'
@@ -56,5 +56,21 @@ export const noteService = {
     })) as Note[];
     
     return notes.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  },
+
+  async getNote(noteId: string): Promise<Note> {
+    const noteRef = doc(db, NOTES_COLLECTION, noteId);
+    const noteSnapshot = await getDoc(noteRef);
+    
+    if (!noteSnapshot.exists()) {
+      throw new Error('Note not found');
+    }
+    
+    return {
+      id: noteSnapshot.id,
+      ...noteSnapshot.data(),
+      createdAt: noteSnapshot.data().createdAt.toDate(),
+      updatedAt: noteSnapshot.data().updatedAt.toDate(),
+    } as Note;
   },
 };

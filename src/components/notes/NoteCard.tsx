@@ -1,4 +1,4 @@
-import { BookOpen, Trash2 } from 'lucide-react';
+import { BookOpen, Eye, Trash2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { useNavigate } from 'react-router-dom';
 
 interface NoteCardProps {
   note: Note;
@@ -15,9 +16,9 @@ interface NoteCardProps {
 
 const NoteCard = ({ note, onDelete }: NoteCardProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
-  const { toast } = useToast();
-
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -53,16 +54,30 @@ const NoteCard = ({ note, onDelete }: NoteCardProps) => {
             })}
           </span>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500"
-          onClick={() => setIsDeleteDialogOpen(true)}
-          disabled={isDeleting}
-        >
-          <Trash2 size={16} />
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-sypher-accent"
+            onClick={() => navigate(`/notes/view/${note.id}`)}
+          >
+            <Eye size={16} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500"
+            onClick={() => setIsDeleteDialogOpen(true)}
+            disabled={isDeleting}
+          >
+            <Trash2 size={16} />
+          </Button>
+        </div>
       </div>
+
+
+
+      {/* Delete Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -85,7 +100,12 @@ const NoteCard = ({ note, onDelete }: NoteCardProps) => {
           </div>
         </DialogContent>
       </Dialog>
-      <h3 className="font-semibold text-lg mb-2">{note.title}</h3>
+      <h3 
+        className="font-semibold text-lg mb-2 cursor-pointer hover:text-sypher-accent transition-colors"
+        onClick={() => navigate(`/notes/${note.id}`)}
+      >
+        {note.title}
+      </h3>
       <div className="text-gray-300 text-sm mb-4 prose prose-invert max-w-none line-clamp-3">
         <ReactMarkdown
           components={{

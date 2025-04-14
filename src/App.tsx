@@ -14,6 +14,7 @@ import CreateNote from "@/pages/notes/CreateNote";
 import Portfolio from "@/pages/Portfolio";
 import NotFound from "./pages/NotFound";
 import Goals from "./pages/Goals";
+import ViewNote from "./pages/notes/ViewNote";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,8 @@ const App = () => (
           
             <Route path="/notes" element={<Layout ><Notes /></Layout>} />
             <Route path="/notes/create" element={<Layout ><CreateNote /></Layout>} />
+            <Route path="/notes/view/:id" element={<Layout ><ViewNote /></Layout>} />
+
             <Route path="/portfolio" element={<Layout><Portfolio /></Layout>} />
             <Route path="/goals" element={<Layout><Goals /></Layout>} />
 
