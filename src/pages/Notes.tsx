@@ -1,64 +1,58 @@
 
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { BookOpen, Plus, Search, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
-// Sample notes data
-const sampleNotes = [
-  {
-    id: "1",
-    title: "Dynamic Programming Patterns",
-    excerpt: "Common patterns in dynamic programming problems and how to identify them.",
-    tags: ["algorithms", "dp", "leetcode"],
-    date: "2024-04-10",
-  },
-  {
-    id: "2",
-    title: "System Design: Distributed Cache",
-    excerpt: "Notes on designing a distributed caching system with Redis.",
-    tags: ["system-design", "cache", "redis"],
-    date: "2024-04-08",
-  },
-  {
-    id: "3",
-    title: "JavaScript Promise Patterns",
-    excerpt: "Advanced patterns for handling asynchronous operations with Promises.",
-    tags: ["javascript", "async", "promises"],
-    date: "2024-04-05",
-  },
-  {
-    id: "4",
-    title: "Binary Tree Traversal Techniques",
-    excerpt: "Different ways to traverse binary trees: in-order, pre-order, post-order, and level-order.",
-    tags: ["data-structures", "trees", "algorithms"],
-    date: "2024-04-01",
-  },
-  {
-    id: "5",
-    title: "React Performance Optimization",
-    excerpt: "Techniques for improving React app performance including memoization, virtualization, and code splitting.",
-    tags: ["react", "performance", "frontend"],
-    date: "2024-03-28",
-  },
-];
-
-// All unique tags from notes
-const allTags = Array.from(
-  new Set(sampleNotes.flatMap(note => note.tags))
-).sort();
+import { useAuth } from "@/context/AuthContext";
+import { Note, noteService } from "@/services/noteService";
+import CreateNoteModal from "@/components/notes/CreateNoteModal";
+import NoteCard from "@/components/notes/NoteCard";
 
 const Notes = () => {
+  const [notes, setNotes] = useState<Note[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      loadNotes();
+    }
+  }, [user]);
+
+  const loadNotes = async () => {
+    try {
+      const userNotes = await noteService.getUserNotes(user!.uid);
+      setNotes(userNotes);
+    } catch (error) {
+      console.error('Error loading notes:', error);
+    }
+  };
+
+  const handleCreateNote = async (noteData: { title: string; content: string; tags: string[] }) => {
+    try {
+      await noteService.createNote({
+        ...noteData,
+        userId: user!.uid,
+      });
+      loadNotes();
+    } catch (error) {
+      console.error('Error creating note:', error);
+    }
+  };
+
+  // All unique tags from notes
+  const allTags = Array.from(
+    new Set(notes.flatMap(note => note.tags))
+  ).sort();
+
   // Filter notes based on search term and selected tags
-  const filteredNotes = sampleNotes.filter(note => {
+  const filteredNotes = notes.filter(note => {
     const matchesSearch = 
       searchTerm === "" || 
       note.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      note.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+      note.content.toLowerCase().includes(searchTerm.toLowerCase());
       
     const matchesTags = 
       selectedTags.length === 0 || 
@@ -86,11 +80,12 @@ const Notes = () => {
           </p>
         </div>
         
-        <Button asChild className="bg-sypher-accent hover:bg-sypher-accent/90">
-          <Link to="/notes/new" className="flex items-center gap-2">
-            <Plus size={18} />
-            New Note
-          </Link>
+        <Button
+          className="bg-sypher-accent hover:bg-sypher-accent/90"
+          onClick={() => setIsCreateModalOpen(true)}
+        >
+          <Plus size={18} className="mr-2" />
+          New Note
         </Button>
       </div>
       
@@ -133,28 +128,19 @@ const Notes = () => {
       {/* Notes List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredNotes.map((note) => (
-          <Link to={`/notes/${note.id}`} key={note.id}>
-            <div className="glass-card p-6 h-full hover:border-sypher-accent/50 transition-colors">
-              <div className="flex items-center gap-2 mb-3 text-sypher-accent">
-                <BookOpen size={16} />
-                <span className="text-xs text-gray-400">{note.date}</span>
-              </div>
-              <h3 className="font-semibold text-lg mb-2">{note.title}</h3>
-              <p className="text-gray-400 text-sm mb-4 line-clamp-3">{note.excerpt}</p>
-              <div className="flex flex-wrap gap-2">
-                {note.tags.map((tag) => (
-                  <span 
-                    key={tag} 
-                    className="px-2 py-0.5 bg-sypher-gray/50 rounded-full text-xs text-gray-400"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </Link>
+          <NoteCard 
+            key={note.id} 
+            note={note} 
+            onDelete={loadNotes}
+          />
         ))}
       </div>
+
+      <CreateNoteModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onCreateNote={handleCreateNote}
+      />
     </div>
   );
 };
