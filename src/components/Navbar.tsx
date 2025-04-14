@@ -65,7 +65,7 @@ const Navbar = () => {
 
       {/* Mobile Navigation Menu */}
       {isOpen && (
-        <div className="lg:hidden absolute top-full left-0 right-0 bg-[#1a1a1a] mt-1 sm:mt-2 py-3 sm:py-4 px-3 sm:px-4 flex flex-col gap-2 sm:gap-4 animate-in slide-in-from-top duration-200 border border-gray-800">
+        <div className="lg:hidden absolute top-full left-0 right-0 bg-[#1a1a1a] mt-1 sm:mt-2 mr-4  ml-4 py-3 sm:py-4 px-3 sm:px-4 flex flex-col gap-2 sm:gap-4 animate-in slide-in-from-top duration-200 border border-gray-800 rounded-lg">
           {navLinks.map((link) => {
             const isActive = location.pathname === link.path;
             return (
