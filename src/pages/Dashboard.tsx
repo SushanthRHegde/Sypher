@@ -21,6 +21,12 @@ const Dashboard = () => {
   });
   const [githubContributions, setGithubContributions] = useState(0);
   const [githubTrend, setGithubTrend] = useState({ value: 0, positive: true });
+  const [recentActivities, setRecentActivities] = useState<Array<{
+    icon: JSX.Element;
+    iconBg: string;
+    title: string;
+    time: string;
+  }>>([]);
 
   useEffect(() => {
     console.log('Profile Data Updated:', profileData);
@@ -45,6 +51,39 @@ const Dashboard = () => {
       setGithubContributions(profileData.github.contributions.totalContributions);
       const yearlyTrend = (profileData.github.contributions.lastYearContributions / profileData.github.contributions.totalContributions) * 100;
       setGithubTrend({ value: Math.round(yearlyTrend), positive: yearlyTrend > 30 });
+
+      // Update activities with GitHub contributions
+      const githubActivity = {
+        icon: <Github size={18} />,
+        iconBg: "bg-purple-500/20 text-purple-500",
+        title: `${profileData.github.contributions.lastYearContributions} contributions to GitHub`,
+        time: "Last year"
+      };
+      
+      const newActivities = [githubActivity];
+
+      // Add LeetCode activities if available
+      if (profileData.leetcode) {
+        const leetcodeActivity = {
+          icon: <Code size={18} />,
+          iconBg: "bg-blue-500/20 text-blue-500",
+          title: `Solved ${profileData.leetcode.totalSolved} problems on LeetCode`,
+          time: "Total Progress"
+        };
+        newActivities.push(leetcodeActivity);
+
+        // Add acceptance rate activity if it's good
+        if (profileData.leetcode.acceptanceRate > 60) {
+          newActivities.push({
+            icon: <Target size={18} />,
+            iconBg: "bg-green-500/20 text-green-500",
+            title: `Achieved ${profileData.leetcode.acceptanceRate.toFixed(1)}% acceptance rate`,
+            time: "LeetCode Achievement"
+          });
+        }
+      }
+
+      setRecentActivities(newActivities);
     }
   }, [profileData]);
   return (
@@ -148,7 +187,7 @@ const Dashboard = () => {
         <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
         <div className="glass-card p-6  hover:border-sypher-accent/50 transition-colors">
           <div className="space-y-4 ">
-            {activities.map((activity, index) => (
+            {recentActivities.map((activity, index) => (
               <div key={index} className="flex items-center gap-4">
                 <div className={`p-2 rounded-full ${activity.iconBg}`}>
                   {activity.icon}
@@ -185,33 +224,7 @@ const Dashboard = () => {
   );
 };
 
-// Sample data
-const activities = [
-  {
-    icon: <Code size={18} />,
-    iconBg: "bg-blue-500/20 text-blue-500",
-    title: "Solved 'Two Sum' on LeetCode",
-    time: "Today, 10:30 AM"
-  },
-  {
-    icon: <Github size={18} />,
-    iconBg: "bg-purple-500/20 text-purple-500",
-    title: "3 contributions to GitHub",
-    time: "Yesterday"
-  },
-  {
-    icon: <BookOpen size={18} />,
-    iconBg: "bg-green-500/20 text-green-500",
-    title: "Created note on 'Dynamic Programming'",
-    time: "2 days ago"
-  },
-  {
-    icon: <Target size={18} />,
-    iconBg: "bg-amber-500/20 text-amber-500",
-    title: "Completed weekly goal",
-    time: "3 days ago"
-  },
-];
+
 
 const actions = [
   {
