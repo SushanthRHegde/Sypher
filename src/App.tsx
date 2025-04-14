@@ -10,6 +10,7 @@ import Index from "@/pages/Index";
 import About from "@/pages/About";
 import Dashboard from "@/pages/Dashboard";
 import Notes from "@/pages/Notes";
+import CreateNote from "@/pages/notes/CreateNote";
 import Portfolio from "@/pages/Portfolio";
 import NotFound from "./pages/NotFound";
 import Goals from "./pages/Goals";
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/dashboard" element={<Layout ><Dashboard /></Layout>} />
           
             <Route path="/notes" element={<Layout ><Notes /></Layout>} />
+            <Route path="/notes/create" element={<Layout ><CreateNote /></Layout>} />
             <Route path="/portfolio" element={<Layout><Portfolio /></Layout>} />
             <Route path="/goals" element={<Layout><Goals /></Layout>} />
 
