@@ -42,7 +42,7 @@ const NoteCard = ({ note, onDelete }: NoteCardProps) => {
     }
   };
   return (
-    <div className="glass-card p-6 h-full hover:border-sypher-accent/50 transition-colors relative group">
+    <div className="glass-card p-6 h-full hover:border-sypher-accent/50 hover:scale-[1.02] transition-all duration-300 relative group cursor-pointer" onClick={() => navigate(`/notes/view/${note.id}`)}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2 text-sypher-accent">
           <BookOpen size={16} />
@@ -58,15 +58,18 @@ const NoteCard = ({ note, onDelete }: NoteCardProps) => {
           <Button
             variant="ghost"
             size="icon"
-            className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-sypher-accent"
-            onClick={() => navigate(`/notes/view/${note.id}`)}
+            className="opacity-0 group-hover:opacity-100 transition-all duration-300 text-gray-400 hover:text-sypher-accent hover:scale-110 active:scale-95 z-20 hover:bg-glass-card sypher-gray/50"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/notes/view/${note.id}`);
+            }}
           >
             <Eye size={16} />
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500"
+            className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 hover:bg-glass-card sypher-gray/50"
             onClick={() => setIsDeleteDialogOpen(true)}
             disabled={isDeleting}
           >
@@ -101,8 +104,8 @@ const NoteCard = ({ note, onDelete }: NoteCardProps) => {
         </DialogContent>
       </Dialog>
       <h3 
-        className="font-semibold text-lg mb-2 cursor-pointer hover:text-sypher-accent transition-colors"
-        onClick={() => navigate(`/notes/${note.id}`)}
+        className="font-semibold text-lg mb-2 hover:text-sypher-accent transition-colors z-10"
+        onClick={() => navigate(`/notes/view/${note.id}`)}
       >
         {note.title}
       </h3>
