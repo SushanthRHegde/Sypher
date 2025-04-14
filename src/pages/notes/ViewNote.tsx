@@ -89,7 +89,7 @@ const ViewNote = () => {
               variant="ghost"
               size="icon"
               onClick={() => navigate('/notes')}
-              className="text-gray-400 hover:text-sypher-accent"
+              className="text-gray-400 hover:text-sypher-accent hover:bg-glass-card sypher-gray/50"
             >
               <ArrowLeft size={20} />
             </Button>
@@ -97,7 +97,7 @@ const ViewNote = () => {
               <h1 className="text-2xl font-bold">{note.title}</h1>
               <div className="flex items-center gap-2 text-gray-400 mt-1">
                 <BookOpen size={16} />
-                <span className="text-sm">
+                <span className="text-sm ">
                   {new Date(note.createdAt).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
@@ -111,7 +111,7 @@ const ViewNote = () => {
             variant="ghost"
             size="icon"
             onClick={() => setIsDeleteDialogOpen(true)}
-            className="text-gray-400 hover:text-red-500"
+            className="text-gray-400 hover:text-red-500 hover:bg-glass-card sypher-gray/50"
             disabled={isDeleting}
           >
             <Trash2 size={20} />

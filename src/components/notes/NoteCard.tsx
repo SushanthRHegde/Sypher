@@ -42,7 +42,7 @@ const NoteCard = ({ note, onDelete }: NoteCardProps) => {
     }
   };
   return (
-    <div className="glass-card p-6 h-full hover:border-sypher-accent/50 hover:scale-[1.02] transition-all duration-300 relative group cursor-pointer" onClick={() => navigate(`/notes/view/${note.id}`)}>
+    <div className="glass-card p-6 h-full hover:border-sypher-accent/50 hover:scale-[1.02] transition-all duration-300 relative group">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2 text-sypher-accent">
           <BookOpen size={16} />
@@ -103,10 +103,7 @@ const NoteCard = ({ note, onDelete }: NoteCardProps) => {
           </div>
         </DialogContent>
       </Dialog>
-      <h3 
-        className="font-semibold text-lg mb-2 hover:text-sypher-accent transition-colors z-10"
-        onClick={() => navigate(`/notes/view/${note.id}`)}
-      >
+      <h3 className="font-semibold text-lg mb-2">
         {note.title}
       </h3>
       <div className="text-gray-300 text-sm mb-4 prose prose-invert max-w-none line-clamp-3">
