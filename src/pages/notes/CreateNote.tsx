@@ -68,20 +68,6 @@ const CreateNote = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 border-b">
-        <div className="flex items-center gap-4 p-4 md:px-16 max-w-5xl mx-auto">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/notes')}
-            className="hover:bg-sypher-gray/20"
-          >
-            <ArrowLeft size={20} />
-          </Button>
-          <h1 className="text-xl md:text-2xl font-semibold">Create New Note</h1>
-        </div>
-      </div>
-
       <div className="pt-20 px-4 md:px-16 pb-8 max-w-5xl mx-auto">
         <div className="space-y-6 md:space-y-8">
           <div className="space-y-2">
