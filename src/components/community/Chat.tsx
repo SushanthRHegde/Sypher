@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Send, User } from 'lucide-react';
+import { Send, User, MessageSquare } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
@@ -23,6 +23,7 @@ const Chat = () => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const [isInputVisible, setIsInputVisible] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -69,51 +70,72 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-16rem)] glass-card">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.userId === user?.uid ? 'justify-end' : 'justify-start'}`}
-          >
-            <div className={`flex items-start gap-2 max-w-[70%] ${message.userId === user?.uid ? 'flex-row-reverse' : 'flex-row'}`}>
-              <div className="w-8 h-8 rounded-full bg-sypher-gray flex items-center justify-center flex-shrink-0">
-                <User size={16} />
-              </div>
-              <div
-                className={`${message.userId === user?.uid ? 'bg-sypher-gray text-white' : 'bg-sypher-gray'} rounded-lg p-3`}
-              >
-                <div className={`flex items-center gap-2 mb-1 ${message.userId === user?.uid ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <span className="text-sm font-medium">{message.userName}</span>
-                  <span className="text-xs text-gray-400">
-                    {message.createdAt?.toDate().toLocaleTimeString()}
-                  </span>
+    <div className="glass-card relative h-[calc(100vh-16rem)] flex flex-col">
+      <div className="flex-1 overflow-y-auto pb-20 sm:pb-16">
+        <div className="p-2 sm:p-4 space-y-3 sm:space-y-4">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={`flex ${message.userId === user?.uid ? 'justify-end' : 'justify-start'}`}
+            >
+              <div className={`flex items-start gap-1 sm:gap-2 max-w-[85%] sm:max-w-[70%] ${message.userId === user?.uid ? 'flex-row-reverse' : 'flex-row'}`}>
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-sypher-gray flex items-center justify-center flex-shrink-0">
+                  <User size={12} className="sm:w-4 sm:h-4" />
                 </div>
-                <p className="text-sm break-words">{message.text}</p>
+                <div
+                  className={`${message.userId === user?.uid ? 'bg-sypher-gray text-white' : 'bg-sypher-gray'} rounded-lg p-2 sm:p-3`}
+                >
+                  <div className={`flex items-center gap-1 sm:gap-2 mb-1 ${message.userId === user?.uid ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <span className="text-xs sm:text-sm font-medium">{message.userName}</span>
+                    <span className="text-[10px] sm:text-xs text-gray-400">
+                      {message.createdAt?.toDate().toLocaleTimeString()}
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm break-words">{message.text}</p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
-      <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-800">
-        <div className="flex gap-2">
-          <Input
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type a message..."
-            className="bg-sypher-gray border-none"
-          />
-          <Button
-            type="submit"
-            className="bg-sypher-accent hover:bg-sypher-accent/90"
-            disabled={!newMessage.trim()}
-          >
-            <Send size={18} />
-          </Button>
-        </div>
-      </form>
+      <div className="fixed bottom-0 left-0 right-0 flex flex-col items-center px-2 sm:px-4">
+        <Button
+          onClick={() => setIsInputVisible(!isInputVisible)}
+          className="mb-2 bg-sypher-accent hover:bg-sypher-accent/90 rounded-full p-2 sm:p-3"
+          size="icon"
+        >
+          <MessageSquare size={20} className="sm:w-6 sm:h-6" />
+        </Button>
+
+        <form
+          onSubmit={handleSendMessage}
+          className={`w-full transition-all duration-300 ease-in-out ${
+            isInputVisible
+              ? 'translate-y-0 opacity-100'
+              : 'translate-y-full opacity-0 pointer-events-none'
+          }`}
+        >
+          <div className="bg-black/20 backdrop-blur-sm border-t border-gray-800 p-3 sm:p-4">
+            <div className="flex gap-2 max-w-[calc(100vw-1rem)] sm:max-w-[calc(100vw-2rem)] mx-auto">
+              <Input
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type a message..."
+                className="bg-sypher-gray border-none text-sm sm:text-base"
+              />
+              <Button
+                type="submit"
+                className="bg-sypher-accent hover:bg-sypher-accent/90 px-3 sm:px-4"
+                disabled={!newMessage.trim()}
+              >
+                <Send size={16} className="sm:w-[18px] sm:h-[18px]" />
+              </Button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
