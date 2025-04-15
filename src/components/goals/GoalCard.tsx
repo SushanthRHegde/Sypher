@@ -11,13 +11,13 @@ interface GoalCardProps {
 
 const GoalCard = ({ goal, onComplete, onDelete }: GoalCardProps) => {
   return (
-    <Card className="glass-card hover:border-sypher-accent/50  border-none w-full transition-all duration-300 hover:shadow-lg p-2 sm:p-4 flex flex-col min-h-[160px] relative">
-      <CardHeader className="flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-4 p-2 sm:p-4">
-        <div className="flex items-start gap-3 w-full">
+    <Card className="glass-card hover:border-sypher-accent/50   border-none w-full transition-all duration-300 hover:shadow-lg p-2 sm:p-4 flex flex-col min-h-[160px] relative">
+      <CardHeader className="flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-4 p-2 sm:p-4 ">
+        <div className="flex items-start gap-3 w-full ">
           <Button
             variant="ghost"
             size="icon"
-            className={`${goal.completed ? 'text-green-500' : 'text-gray-400'} flex-shrink-0 hover:bg-opacity-10`}
+            className={`${goal.completed ? 'text-green-500' : 'text-gray-400'} flex-shrink-0 hover:text-green-500 hover:bg-glass-card hover:scale-110 transition-transform duration-200`}
             onClick={() => onComplete(goal.id)}
           >
             {goal.completed ? (
@@ -34,7 +34,7 @@ const GoalCard = ({ goal, onComplete, onDelete }: GoalCardProps) => {
         <Button
           variant="ghost"
           size="icon"
-          className="text-gray-400 hover:text-red-500 hover:bg-opacity-10 absolute top-4 right-4"
+          className="text-gray-400 hover:text-red-500 absolute top-4 right-4 hover:bg-glass-card hover:scale-110 transition-transform duration-200" 
           onClick={() => onDelete(goal.id)}
         >
           <span className="sr-only">Delete goal</span>
