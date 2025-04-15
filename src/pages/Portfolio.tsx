@@ -7,6 +7,7 @@ import SkillDialog from '@/components/portfolio/SkillDialog';
 import ProjectDialog from '@/components/portfolio/ProjectDialog';
 import CertificateDialog from '@/components/portfolio/CertificateDialog';
 import BioDialog from '@/components/portfolio/BioDialog';
+import AvatarDialog from '@/components/portfolio/AvatarDialog';
 
 interface Project {
   name: string;
@@ -23,12 +24,13 @@ interface Certificate {
 }
 
 const Portfolio = () => {
-  const { user, profileData, updateSkills, updateProfileLinks, updateProjects, updateCertificates, updateBio } = useAuth();
+  const { user, profileData, updateSkills, updateProfileLinks, updateProjects, updateCertificates, updateBio, updateAvatar } = useAuth();
   const [isPublic, setIsPublic] = useState(true);
   const [showSkillDialog, setShowSkillDialog] = useState(false);
   const [showProjectDialog, setShowProjectDialog] = useState(false);
   const [showCertificateDialog, setShowCertificateDialog] = useState(false);
   const [showBioDialog, setShowBioDialog] = useState(false);
+  const [showAvatarDialog, setShowAvatarDialog] = useState(false);
   const [newSkill, setNewSkill] = useState({ name: '', level: '' });
   const [newProject, setNewProject] = useState<Project>({
     name: '',
@@ -158,8 +160,17 @@ const Portfolio = () => {
       {/* Profile Section */}
       <Card className="glass-card p-4 sm:p-6 mb-6 sm:mb-8 glass-card hover:border-sypher-accent/50 transition-colors">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
-          <div className="w-24 sm:w-32 h-24 sm:h-32 rounded-full bg-sypher-accent flex items-center justify-center flex-shrink-0">
-            {user?.photoURL ? (
+          <div 
+            className="w-24 sm:w-32 h-24 sm:h-32 rounded-full bg-sypher-accent flex items-center justify-center flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity relative group"
+            onClick={() => setShowAvatarDialog(true)}
+          >
+            {profileData?.avatar ? (
+              <img
+                src={profileData.avatar || user?.photoURL || ''}
+                alt={user?.displayName || 'User'}
+                className="w-full h-full rounded-full object-cover"
+              />
+            ) : user?.photoURL ? (
               <img
                 src={user.photoURL}
                 alt={user.displayName || 'User'}
@@ -168,6 +179,9 @@ const Portfolio = () => {
             ) : (
               <User className="h-12 sm:h-16 w-12 sm:w-16 text-white" />
             )}
+            <div className="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Edit className="h-6 w-6 text-white" />
+            </div>
           </div>
           <div className="flex-1 text-center sm:text-left">
             <h2 className="text-xl sm:text-2xl font-bold mb-2">{user?.displayName || 'Your Name'}</h2>
@@ -386,6 +400,13 @@ const Portfolio = () => {
           setShowBioDialog(false);
         }}
         initialBio={profileData?.bio}
+      />
+
+      <AvatarDialog
+        isOpen={showAvatarDialog}
+        onClose={() => setShowAvatarDialog(false)}
+        onSave={updateAvatar}
+        currentAvatar={profileData?.avatar}
       />
     </div>
   );

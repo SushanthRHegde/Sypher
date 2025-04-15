@@ -19,6 +19,7 @@ interface AuthContextType {
   updateProjects: (projects: { name: string; description: string; techStack: string[]; githubUrl: string }[]) => Promise<void>;
   updateCertificates: (certificates: { name: string; organization: string; issueDate: string; verificationUrl: string }[]) => Promise<void>;
   updateBio: (bio: { text: string }) => Promise<void>;
+  updateAvatar: (avatarUrl: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -33,6 +34,7 @@ const AuthContext = createContext<AuthContextType>({
   updateProjects: async () => {},
   updateCertificates: async () => {},
   updateBio: async () => {},
+  updateAvatar: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -205,8 +207,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const updateAvatar = async (avatarUrl: string) => {
+    if (user && profileLinks) {
+      try {
+        const updatedProfileData = { ...profileData, avatar: avatarUrl };
+        await saveProfileData(user.uid, updatedProfileData, profileLinks);
+        setProfileData(updatedProfileData);
+        toast({
+          title: "Avatar updated",
+          description: "Your profile picture has been successfully updated",
+        });
+      } catch (error) {
+        toast({
+          title: "Error updating avatar",
+          description: "Could not update profile picture",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, profileLinks, profileData, googleSignIn, logout, updateProfileLinks, updateSkills, updateProjects, updateCertificates, updateBio }}>
+    <AuthContext.Provider value={{ user, loading, profileLinks, profileData, googleSignIn, logout, updateProfileLinks, updateSkills, updateProjects, updateCertificates, updateBio, updateAvatar }}>
 
 
       {children}

@@ -30,6 +30,7 @@ interface LeetCodeProfile {
 }
 
 export interface ProfileData {
+  avatar: any;
   bio: string;
   certificates: any[];
   projects: any[];
@@ -117,6 +118,7 @@ export const fetchAllProfiles = async (links: {
   const result: ProfileData = {
     bio: '',
     certificates: [],
+    avatar: '',
     projects: [],
     skills: []
   };
