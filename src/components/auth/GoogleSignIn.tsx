@@ -39,7 +39,7 @@ const GoogleSignIn = () => {
                     <User className="h-4 w-4 text-white" />
                   </div>
                 )}
-                <div className="hidden md:block">
+                <div className=" md:block">
                   <p className="text-sm font-medium">{user.displayName}</p>
                   <p className="text-xs text-gray-400">{user.email}</p>
                 </div>
