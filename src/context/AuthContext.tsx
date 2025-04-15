@@ -101,10 +101,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         
         // Check if this user has profile data in Firestore
         const savedData = await fetchProfileData(signedInUser.uid);
-        if (!savedData) {
-          // Show dialog only for first time users or those without profile data
-          setShowProfileDialog(true);
-        } else {
+        if (savedData) {
           setProfileLinks(savedData.profileLinks);
           setProfileData(savedData.profileData);
         }
@@ -232,14 +229,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
       {children}
-      {showProfileDialog && (
-        <ProfileLinksDialog 
-          isOpen={showProfileDialog}
-          onClose={() => setShowProfileDialog(false)}
-          onSave={updateProfileLinks}
-          initialLinks={profileLinks || undefined}
-        />
-      )}
     </AuthContext.Provider>
   );
 };

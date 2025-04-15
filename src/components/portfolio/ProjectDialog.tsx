@@ -8,7 +8,6 @@ interface Project {
   name: string;
   description: string;
   techStack: string[];
-  githubUrl: string;
 }
 
 interface ProjectDialogProps {
@@ -21,8 +20,7 @@ const ProjectDialog = ({ isOpen, onClose, onSave }: ProjectDialogProps) => {
   const [newProject, setNewProject] = useState<Project>({
     name: '',
     description: '',
-    techStack: [],
-    githubUrl: ''
+    techStack: []
   });
   const [newTechStack, setNewTechStack] = useState('');
 
@@ -44,13 +42,12 @@ const ProjectDialog = ({ isOpen, onClose, onSave }: ProjectDialogProps) => {
   };
 
   const handleSave = () => {
-    if (newProject.name && newProject.description && newProject.techStack.length > 0 && newProject.githubUrl) {
+    if (newProject.name && newProject.description && newProject.techStack.length > 0) {
       onSave(newProject);
       setNewProject({
         name: '',
         description: '',
         techStack: [],
-        githubUrl: ''
       });
       onClose();
     }
@@ -112,19 +109,13 @@ const ProjectDialog = ({ isOpen, onClose, onSave }: ProjectDialogProps) => {
               ))}
             </div>
           </div>
-          <div className="grid gap-2">
-            <Input
-              placeholder="GitHub URL"
-              value={newProject.githubUrl}
-              onChange={(e) => setNewProject({ ...newProject, githubUrl: e.target.value })}
-            />
-          </div>
+
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Cancel</Button>
           <Button
             onClick={handleSave}
-            disabled={!newProject.name || !newProject.description || newProject.techStack.length === 0 || !newProject.githubUrl}
+            disabled={!newProject.name || !newProject.description || newProject.techStack.length === 0}
           >
             Add Project
           </Button>

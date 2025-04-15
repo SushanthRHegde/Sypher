@@ -217,7 +217,7 @@ const Portfolio = () => {
       </Card>
 
       {/* Stats Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <Card className="glass-card p-4 sm:p-6 glass-card hover:border-sypher-accent/50 transition-colors">
           <h3 className="text-lg sm:text-xl font-semibold mb-4">LeetCode Statistics</h3>
           <div className="grid grid-cols-3 gap-3 sm:gap-4 text-center">
@@ -253,7 +253,7 @@ const Portfolio = () => {
             </div>
           </div>
         </Card>
-      </div>
+      </div> */}
 
       {/* Skills Section */}
       <Card className="glass-card p-4 sm:p-6 mb-6 sm:mb-8">

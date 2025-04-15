@@ -3,7 +3,6 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { LogOut, LogIn, Settings, User } from 'lucide-react';
 import { useState } from 'react';
-import ProfileLinksDialog from './ProfileLinksDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,8 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const GoogleSignIn = () => {
-  const { user, profileLinks, profileData, googleSignIn, logout, updateProfileLinks } = useAuth();
-  const [showProfileDialog, setShowProfileDialog] = useState(false);
+  const { user, profileData, googleSignIn, logout } = useAuth();
 
   return (
     <div>
@@ -46,22 +44,14 @@ const GoogleSignIn = () => {
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem onClick={() => setShowProfileDialog(true)}>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
-              </DropdownMenuItem>
+
               <DropdownMenuItem onClick={logout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Sign Out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          
-          <ProfileLinksDialog 
-            isOpen={showProfileDialog}
-            onClose={() => setShowProfileDialog(false)}
-            onSave={updateProfileLinks}
-          />
+
         </div>
       ) : (
         <Button 

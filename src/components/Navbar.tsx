@@ -13,7 +13,7 @@ const navLinks = [
   { name: "Notes", path: "/notes" },
   { name: "Goals", path: "/goals" },
   { name: "Community", path: "/community" },
-  { name: "Dashboard", path: "/dashboard" },
+  // { name: "Dashboard", path: "/dashboard" },
 ];
 
 const Navbar = () => {
