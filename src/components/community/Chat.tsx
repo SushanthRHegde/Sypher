@@ -23,7 +23,6 @@ const Chat = () => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [isInputVisible, setIsInputVisible] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const formatDate = (date: Date) => {
@@ -83,9 +82,10 @@ const Chat = () => {
   };
 
   return (
-    <div className="glass-card relative h-[calc(100vh-16rem)] flex flex-col">
-      <div className="flex-1 overflow-y-auto pb-20 sm:pb-16">
-        <div className="p-2 sm:p-4 space-y-3 sm:space-y-4">
+    <div className="relative flex flex-col gap-4">
+      <div className="glass-card h-[calc(100vh-22rem)] flex flex-col bg-black/10 backdrop-blur-md">
+        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-sypher-accent/20 scrollbar-track-transparent hover:scrollbar-thumb-sypher-accent/40 transition-colors">
+          <div className="p-2 sm:p-4 space-y-3 sm:space-y-4">
           {messages.reduce((messageGroups: JSX.Element[], message, index) => {
             const messageDate = message.createdAt?.toDate();
             const prevMessageDate = messages[index - 1]?.createdAt?.toDate();
@@ -132,42 +132,24 @@ const Chat = () => {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 flex flex-col items-center px-2 sm:px-4">
-        <Button
-          onClick={() => setIsInputVisible(!isInputVisible)}
-          className="mb-2 bg-sypher-accent hover:bg-sypher-accent/90 rounded-full p-2 sm:p-3"
-          size="icon"
-        >
-          <MessageSquare size={20} className="sm:w-6 sm:h-6" />
-        </Button>
-
-        <form
-          onSubmit={handleSendMessage}
-          className={`w-full transition-all duration-300 ease-in-out ${
-            isInputVisible
-              ? 'translate-y-0 opacity-100'
-              : 'translate-y-full opacity-0 pointer-events-none'
-          }`}
-        >
-          <div className="bg-black/20 backdrop-blur-sm border-t border-gray-800 p-3 sm:p-4">
-            <div className="flex gap-2 max-w-[calc(100vw-1rem)] sm:max-w-[calc(100vw-2rem)] mx-auto">
-              <Input
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type a message..."
-                className="bg-sypher-gray border-none text-sm sm:text-base"
-              />
-              <Button
-                type="submit"
-                className="bg-sypher-accent hover:bg-sypher-accent/90 px-3 sm:px-4"
-                disabled={!newMessage.trim()}
-              >
-                <Send size={16} className="sm:w-[18px] sm:h-[18px]" />
-              </Button>
-            </div>
-          </div>
-        </form>
       </div>
+      <form onSubmit={handleSendMessage} className="w-full  backdrop-blur-md  rounded-lg   shadow-lg">
+        <div className="flex gap-2 items-center">
+          <Input
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="Type a message..."
+            className="bg-sypher-gray border-none text-sm sm:text-base"
+          />
+          <Button
+            type="submit"
+            className="bg-sypher-accent hover:bg-sypher-accent/90 px-3 sm:px-4"
+            disabled={!newMessage.trim()}
+          >
+            <Send size={16} className="sm:w-[18px] sm:h-[18px]" />
+          </Button>
+        </div>
+      </form>
     </div>
   );
 };
