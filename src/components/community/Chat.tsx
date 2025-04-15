@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Send, User, MessageSquare } from 'lucide-react';
+import { Send, User, MessageSquare, AlertCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { initializeApp } from 'firebase/app';
 import {firebaseConfig} from '../../lib/firebase'
+import { messageModeration } from '@/services/messageModeration';
 
 import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, limit, onSnapshot, serverTimestamp } from 'firebase/firestore';
 const app = initializeApp(firebaseConfig);
@@ -23,6 +24,7 @@ const Chat = () => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const [validationError, setValidationError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const formatDate = (date: Date) => {
@@ -64,20 +66,41 @@ const Chat = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const text = e.target.value;
+    setNewMessage(text);
+    
+    if (text.trim()) {
+      const validation = messageModeration.validateMessage(text);
+      setValidationError(validation.message || null);
+    } else {
+      setValidationError(null);
+    }
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || !user) return;
 
+    const validation = messageModeration.validateMessage(newMessage);
+    if (!validation.isValid) {
+      setValidationError(validation.message || 'Invalid message');
+      return;
+    }
+
     try {
+      const cleanedMessage = messageModeration.cleanMessage(newMessage.trim());
       await addDoc(collection(db, 'chat_messages'), {
-        text: newMessage.trim(),
+        text: cleanedMessage,
         userId: user.uid,
         userName: user.displayName || 'Anonymous',
         createdAt: serverTimestamp(),
       });
       setNewMessage('');
+      setValidationError(null);
     } catch (error) {
       console.error('Error sending message:', error);
+      setValidationError('Failed to send message. Please try again.');
     }
   };
 
@@ -133,22 +156,28 @@ const Chat = () => {
       </div>
 
       </div>
-      <form onSubmit={handleSendMessage} className="w-full  backdrop-blur-md  rounded-lg   shadow-lg">
+      <form onSubmit={handleSendMessage} className="w-full backdrop-blur-md rounded-lg shadow-lg space-y-2">
         <div className="flex gap-2 items-center">
           <Input
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+            onChange={handleMessageChange}
             placeholder="Type a message..."
-            className="bg-sypher-gray border-none text-sm sm:text-base"
+            className={`bg-sypher-gray border-none text-sm sm:text-base ${validationError ? 'border-red-500' : ''}`}
           />
           <Button
             type="submit"
             className="bg-sypher-accent hover:bg-sypher-accent/90 px-3 sm:px-4"
-            disabled={!newMessage.trim()}
+            disabled={!newMessage.trim() || !!validationError}
           >
             <Send size={16} className="sm:w-[18px] sm:h-[18px]" />
           </Button>
         </div>
+        {validationError && (
+          <div className="flex items-center gap-2 text-red-400 text-xs">
+            <AlertCircle size={14} />
+            <span>{validationError}</span>
+          </div>
+        )}
       </form>
     </div>
   );
