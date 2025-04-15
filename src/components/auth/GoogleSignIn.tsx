@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const GoogleSignIn = () => {
-  const { user, profileLinks, googleSignIn, logout, updateProfileLinks } = useAuth();
+  const { user, profileLinks, profileData, googleSignIn, logout, updateProfileLinks } = useAuth();
   const [showProfileDialog, setShowProfileDialog] = useState(false);
 
   return (
@@ -22,7 +22,13 @@ const GoogleSignIn = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="flex items-center gap-2 cursor-pointer hover:opacity-80">
-                {user.photoURL ? (
+                {profileData?.avatar ? (
+                  <img 
+                    src={profileData.avatar} 
+                    alt={user.displayName || 'User'} 
+                    className="w-10 h-10 rounded-full"
+                  />
+                ) : user?.photoURL ? (
                   <img 
                     src={user.photoURL} 
                     alt={user.displayName || 'User'} 
