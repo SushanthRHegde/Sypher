@@ -26,6 +26,19 @@ const Chat = () => {
   const [isInputVisible, setIsInputVisible] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const formatDate = (date: Date) => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return 'Yesterday';
+    }
+    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  };
+
   useEffect(() => {
     if (!user) return;
 
@@ -73,29 +86,48 @@ const Chat = () => {
     <div className="glass-card relative h-[calc(100vh-16rem)] flex flex-col">
       <div className="flex-1 overflow-y-auto pb-20 sm:pb-16">
         <div className="p-2 sm:p-4 space-y-3 sm:space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.userId === user?.uid ? 'justify-end' : 'justify-start'}`}
-            >
-              <div className={`flex items-start gap-1 sm:gap-2 max-w-[85%] sm:max-w-[70%] ${message.userId === user?.uid ? 'flex-row-reverse' : 'flex-row'}`}>
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-sypher-gray flex items-center justify-center flex-shrink-0">
-                  <User size={12} className="sm:w-4 sm:h-4" />
-                </div>
-                <div
-                  className={`${message.userId === user?.uid ? 'bg-sypher-gray text-white' : 'bg-sypher-gray'} rounded-lg p-2 sm:p-3`}
-                >
-                  <div className={`flex items-center gap-1 sm:gap-2 mb-1 ${message.userId === user?.uid ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <span className="text-xs sm:text-sm font-medium">{message.userName}</span>
-                    <span className="text-[10px] sm:text-xs text-gray-400">
-                      {message.createdAt?.toDate().toLocaleTimeString()}
-                    </span>
+          {messages.reduce((messageGroups: JSX.Element[], message, index) => {
+            const messageDate = message.createdAt?.toDate();
+            const prevMessageDate = messages[index - 1]?.createdAt?.toDate();
+
+            if (!messageDate) return messageGroups;
+
+            if (index === 0 || !prevMessageDate || messageDate.toDateString() !== prevMessageDate.toDateString()) {
+              messageGroups.push(
+                <div key={`date-${message.id}`} className="flex justify-center my-4">
+                  <div className="bg-sypher-gray/30 px-4 py-1 rounded-full">
+                    <span className="text-xs text-gray-400">{formatDate(messageDate)}</span>
                   </div>
-                  <p className="text-xs sm:text-sm break-words">{message.text}</p>
+                </div>
+              );
+            }
+
+            messageGroups.push(
+              <div
+                key={message.id}
+                className={`flex ${message.userId === user?.uid ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className={`flex items-start gap-1 sm:gap-2 max-w-[85%] sm:max-w-[70%] ${message.userId === user?.uid ? 'flex-row-reverse' : 'flex-row'}`}>
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-sypher-gray flex items-center justify-center flex-shrink-0">
+                    <User size={12} className="sm:w-4 sm:h-4" />
+                  </div>
+                  <div
+                    className={`${message.userId === user?.uid ? 'bg-sypher-gray text-white' : 'bg-sypher-gray'} rounded-lg p-2 sm:p-3`}
+                  >
+                    <div className={`flex items-center gap-1 sm:gap-2 mb-1 ${message.userId === user?.uid ? 'flex-row-reverse' : 'flex-row'}`}>
+                      <span className="text-xs sm:text-sm font-medium">{message.userName}</span>
+                      <span className="text-[10px] sm:text-xs text-gray-400">
+                        {messageDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm break-words">{message.text}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+
+            return messageGroups;
+          }, [])}
           <div ref={messagesEndRef} />
         </div>
       </div>
